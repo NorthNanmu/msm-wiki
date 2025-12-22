@@ -33,7 +33,6 @@ jobs:
         with:
           repository: msm9527/msm
           ref: ${{ inputs.branch || 'main' }}
-          token: ${{ secrets.MSM_REPO_TOKEN }}
           fetch-depth: 0
 
       - name: 读取版本信息
@@ -89,7 +88,6 @@ jobs:
         with:
           repository: msm9527/msm
           ref: ${{ inputs.branch || 'main' }}
-          token: ${{ secrets.MSM_REPO_TOKEN }}
 
       - name: Setup Go
         uses: actions/setup-go@v5
