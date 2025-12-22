@@ -4,27 +4,29 @@ MSM 是单一二进制程序，零外部依赖，安装非常简单。
 
 ## 系统要求
 
-### 最低配置
+### 支持的平台
 
-- **操作系统**: Linux (Ubuntu 20.04+ / Debian 11+ / CentOS 8+)
-- **CPU**: 1 核心
-- **内存**: 512MB
-- **磁盘**: 2GB 可用空间
-- **权限**: root 或 sudo 权限
-
-### 推荐配置
-
-- **操作系统**: Ubuntu 22.04 LTS / Debian 12
-- **CPU**: 2 核心以上
-- **内存**: 2GB 以上
-- **磁盘**: 10GB 以上可用空间
-- **网络**: 公网 IP（用于远程访问）
+- ✅ **Linux** (Ubuntu 20.04+ / Debian 11+ / CentOS 8+)
+- ✅ **macOS** (10.15+)
 
 ### 支持的架构
 
 - ✅ x86_64 (amd64)
 - ✅ ARM64 (aarch64)
-- ✅ ARMv7
+
+### 最低配置
+
+- **CPU**: 1 核心
+- **内存**: 512MB
+- **磁盘**: 2GB 可用空间
+- **权限**: root 或 sudo 权限（Linux）/ 管理员权限（macOS）
+
+### 推荐配置
+
+- **CPU**: 2 核心以上
+- **内存**: 2GB 以上
+- **磁盘**: 10GB 以上可用空间
+- **网络**: 公网 IP（用于远程访问）
 
 ## 快速安装
 
@@ -46,18 +48,39 @@ curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | 
 
 #### 1. 下载二进制文件
 
-访问 [Releases 页面](https://github.com/msm9527/msm-wiki/releases/latest) 下载对应架构的二进制文件。
+访问 [Releases 页面](https://github.com/msm9527/msm-wiki/releases/latest) 下载对应平台和架构的压缩包。
 
+**Linux amd64**:
 ```bash
-# 下载 amd64 版本
-wget https://github.com/msm9527/msm-wiki/releases/latest/download/msm-linux-amd64
-
-# 添加执行权限
-chmod +x msm-linux-amd64
-
-# 移动到系统路径
-sudo mv msm-linux-amd64 /usr/local/bin/msm
+wget https://github.com/msm9527/msm-wiki/releases/latest/download/msm-0.7.1-linux-amd64.tar.gz
+tar -xzf msm-0.7.1-linux-amd64.tar.gz
+sudo mv msm /usr/local/bin/msm
 ```
+
+**Linux arm64**:
+```bash
+wget https://github.com/msm9527/msm-wiki/releases/latest/download/msm-0.7.1-linux-arm64.tar.gz
+tar -xzf msm-0.7.1-linux-arm64.tar.gz
+sudo mv msm /usr/local/bin/msm
+```
+
+**macOS amd64 (Intel)**:
+```bash
+wget https://github.com/msm9527/msm-wiki/releases/latest/download/msm-0.7.1-darwin-amd64.tar.gz
+tar -xzf msm-0.7.1-darwin-amd64.tar.gz
+sudo mv msm /usr/local/bin/msm
+```
+
+**macOS arm64 (Apple Silicon)**:
+```bash
+wget https://github.com/msm9527/msm-wiki/releases/latest/download/msm-0.7.1-darwin-arm64.tar.gz
+tar -xzf msm-0.7.1-darwin-arm64.tar.gz
+sudo mv msm /usr/local/bin/msm
+```
+
+::: tip 提示
+请将版本号 `0.7.1` 替换为最新版本号。
+:::
 
 #### 2. 安装系统服务
 

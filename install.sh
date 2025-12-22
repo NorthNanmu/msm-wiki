@@ -54,11 +54,9 @@ detect_arch() {
         aarch64|arm64)
             echo "arm64"
             ;;
-        armv7l)
-            echo "armv7"
-            ;;
         *)
             print_error "不支持的系统架构: $arch"
+            print_info "目前仅支持 amd64 和 arm64 架构"
             exit 1
             ;;
     esac
@@ -66,35 +64,51 @@ detect_arch() {
 
 # 检测操作系统
 detect_os() {
-    if [ -f /etc/os-release ]; then
-        . /etc/os-release
-        echo $ID
-    else
-        print_error "无法检测操作系统"
-        exit 1
-    fi
+    local os=$(uname -s | tr '[:upper:]' '[:lower:]')
+    case $os in
+        linux)
+            echo "linux"
+            ;;
+        darwin)
+            echo "darwin"
+            ;;
+        *)
+            print_error "不支持的操作系统: $os"
+            print_info "目前仅支持 Linux 和 macOS"
+            exit 1
+            ;;
+    esac
 }
 
 # 安装依赖
 install_dependencies() {
-    local os=$(detect_os)
-    print_info "检测到操作系统: $os"
+    local os=$(uname -s | tr '[:upper:]' '[:lower:]')
 
-    case $os in
-        ubuntu|debian)
-            print_info "更新软件包列表..."
-            apt-get update -qq
-            print_info "安装依赖..."
-            apt-get install -y curl wget tar gzip > /dev/null 2>&1
-            ;;
-        centos|rhel|fedora)
-            print_info "安装依赖..."
-            yum install -y curl wget tar gzip > /dev/null 2>&1
-            ;;
-        *)
-            print_warning "未知的操作系统，跳过依赖安装"
-            ;;
-    esac
+    if [ "$os" = "linux" ]; then
+        if [ -f /etc/os-release ]; then
+            . /etc/os-release
+            print_info "检测到操作系统: $ID"
+
+            case $ID in
+                ubuntu|debian)
+                    print_info "更新软件包列表..."
+                    apt-get update -qq
+                    print_info "安装依赖..."
+                    apt-get install -y curl wget tar gzip > /dev/null 2>&1
+                    ;;
+                centos|rhel|fedora)
+                    print_info "安装依赖..."
+                    yum install -y curl wget tar gzip > /dev/null 2>&1
+                    ;;
+                *)
+                    print_warning "未知的 Linux 发行版，跳过依赖安装"
+                    ;;
+            esac
+        fi
+    elif [ "$os" = "darwin" ]; then
+        print_info "检测到 macOS 系统"
+        # macOS 通常已经包含所需工具
+    fi
 }
 
 # 获取最新版本号
@@ -113,10 +127,12 @@ get_latest_version() {
 # 下载 MSM
 download_msm() {
     local version=$1
-    local arch=$2
-    local download_url="https://github.com/${GITHUB_REPO}/releases/download/${version}/msm-linux-${arch}"
+    local os=$2
+    local arch=$3
+    local filename="msm-${version}-${os}-${arch}.tar.gz"
+    local download_url="https://github.com/${GITHUB_REPO}/releases/download/${version}/${filename}"
 
-    print_info "下载 MSM ${version} (${arch})..."
+    print_info "下载 MSM ${version} (${os}-${arch})..."
     print_info "下载地址: $download_url"
 
     # 创建临时目录
@@ -124,14 +140,22 @@ download_msm() {
     cd $temp_dir
 
     # 下载文件
-    if ! wget -q --show-progress "$download_url" -O msm; then
+    if ! wget -q --show-progress "$download_url" -O "${filename}"; then
         print_error "下载失败"
         rm -rf $temp_dir
         exit 1
     fi
 
-    # 添加执行权限
-    chmod +x msm
+    # 解压文件
+    print_info "解压文件..."
+    if ! tar -xzf "${filename}"; then
+        print_error "解压失败"
+        rm -rf $temp_dir
+        exit 1
+    fi
+
+    # 删除压缩包
+    rm "${filename}"
 
     echo $temp_dir
 }
@@ -249,8 +273,10 @@ main() {
     # 检查 root 权限
     check_root
 
-    # 检测系统架构
+    # 检测操作系统和架构
+    local os=$(detect_os)
     local arch=$(detect_arch)
+    print_info "操作系统: $os"
     print_info "系统架构: $arch"
 
     # 安装依赖
@@ -261,7 +287,7 @@ main() {
     print_success "最新版本: $version"
 
     # 下载 MSM
-    local temp_dir=$(download_msm $version $arch)
+    local temp_dir=$(download_msm $version $os $arch)
 
     # 安装 MSM
     install_msm $temp_dir
