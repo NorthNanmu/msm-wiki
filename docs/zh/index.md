@@ -96,25 +96,10 @@ chmod +x msm
 
 ## 技术栈
 
-### 后端
-- **Golang** - 高性能后端框架
-- **Gin** - HTTP API 框架
-- **GORM** - ORM 数据库操作
-- **SQLite** - 轻量级数据库
-
-### 前端
-- **React 18** - 现代化前端框架
-- **TypeScript** - 类型安全
-- **Vite** - 快速构建工具
-- **TailwindCSS** - 实用优先的 CSS 框架
-- **shadcn/ui** - 高质量 UI 组件库
+- **前端**: React 18
+- **后端**: Golang
 
 ## 社区
 
-- [GitHub Issues](https://github.com/yourusername/msm/issues) - 报告问题
-- [GitHub Discussions](https://github.com/yourusername/msm/discussions) - 讨论交流
-- [贡献指南](/zh/development/contributing) - 参与贡献
+- [GitHub Issues](https://github.com/msm9527/msm-wiki/issues) - 报告问题
 
-## 许可证
-
-[MIT License](https://github.com/yourusername/msm/blob/main/LICENSE)
