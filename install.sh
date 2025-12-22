@@ -13,7 +13,6 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # 配置变量
-INSTALL_DIR="/opt/msm"
 GITHUB_REPO="msm9527/msm-wiki"
 RELEASE_URL="https://github.com/${GITHUB_REPO}/releases/latest"
 SERVICE_NAME="msm"
