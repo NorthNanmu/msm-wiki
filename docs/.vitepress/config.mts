@@ -41,6 +41,7 @@ export default defineConfig({
             { text: '什么是 MSM', link: '/zh/introduction/what-is-msm' },
             { text: '核心特性', link: '/zh/introduction/features' },
             { text: '架构设计', link: '/zh/introduction/architecture' },
+            { text: '透明代理架构', link: '/zh/introduction/transparent-proxy' },
             { text: '技术栈', link: '/zh/introduction/tech-stack' }
           ]
         },
