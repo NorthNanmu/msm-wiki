@@ -383,33 +383,41 @@ start_service() {
 
 # 显示安装信息
 show_info() {
-    # 尝试获取服务器 IP 地址
-    local ip="your-server-ip"
+    # 获取内网 IP 地址
+    local lan_ip="localhost"
 
-    # 方法1: 使用下载命令获取公网 IP
-    if [ "$DOWNLOAD_CMD" = "curl" ]; then
-        ip=$(curl -s --connect-timeout 3 ifconfig.me 2>/dev/null || echo "")
-    elif [ "$DOWNLOAD_CMD" = "wget" ]; then
-        ip=$(wget -qO- --timeout=3 ifconfig.me 2>/dev/null || echo "")
+    # 方法1: 使用 hostname 命令
+    if command -v hostname &> /dev/null; then
+        lan_ip=$(hostname -I 2>/dev/null | awk '{print $1}' || echo "")
     fi
 
-    # 方法2: 如果上面失败，尝试获取本地 IP
-    if [ -z "$ip" ] || [ "$ip" = "" ]; then
-        if command -v hostname &> /dev/null; then
-            ip=$(hostname -I 2>/dev/null | awk '{print $1}' || echo "")
-        fi
-    fi
-
-    # 方法3: 尝试使用 ip 命令
-    if [ -z "$ip" ] || [ "$ip" = "" ]; then
+    # 方法2: 使用 ip 命令
+    if [ -z "$lan_ip" ] || [ "$lan_ip" = "" ]; then
         if command -v ip &> /dev/null; then
-            ip=$(ip route get 1 2>/dev/null | awk '{print $7; exit}' || echo "")
+            lan_ip=$(ip route get 1 2>/dev/null | awk '{print $7; exit}' || echo "")
         fi
     fi
 
-    # 如果所有方法都失败，使用占位符
-    if [ -z "$ip" ] || [ "$ip" = "" ]; then
-        ip="your-server-ip"
+    # 方法3: 使用 ifconfig 命令
+    if [ -z "$lan_ip" ] || [ "$lan_ip" = "" ]; then
+        if command -v ifconfig &> /dev/null; then
+            lan_ip=$(ifconfig 2>/dev/null | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -n1 || echo "")
+        fi
+    fi
+
+    # 兜底
+    if [ -z "$lan_ip" ] || [ "$lan_ip" = "" ]; then
+        lan_ip="localhost"
+    fi
+
+    # 获取外网 IP 地址
+    local wan_ip=""
+
+    # 使用下载命令获取公网 IP
+    if [ "$DOWNLOAD_CMD" = "curl" ]; then
+        wan_ip=$(curl -s --connect-timeout 3 ifconfig.me 2>/dev/null || echo "")
+    elif [ "$DOWNLOAD_CMD" = "wget" ]; then
+        wan_ip=$(wget -qO- --timeout=3 ifconfig.me 2>/dev/null || echo "")
     fi
 
     echo ""
@@ -417,11 +425,18 @@ show_info() {
     echo -e "${GREEN}MSM 安装完成！${NC}"
     echo "=========================================="
     echo ""
-    echo "访问地址: http://${ip}:7777"
+    echo "访问地址:"
+    echo "  内网访问: http://${lan_ip}:7777"
+    if [ -n "$wan_ip" ] && [ "$wan_ip" != "" ]; then
+        echo "  外网访问: http://${wan_ip}:7777"
+    fi
     echo ""
     echo -e "${YELLOW}重要提示:${NC}"
     echo "  1. 首次访问时需要创建管理员账号"
     echo "  2. 请设置强密码并妥善保管"
+    if [ -n "$wan_ip" ] && [ "$wan_ip" != "" ]; then
+        echo "  3. 外网访问需要确保防火墙已开放 7777 端口"
+    fi
     echo ""
     echo "常用命令:"
     echo "  查看状态: msm status"
