@@ -2,7 +2,7 @@
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/msmbox/msm.svg)](https://hub.docker.com/r/msmbox/msm)
 [![Docker Image Size](https://img.shields.io/docker/image-size/msmbox/msm/latest.svg)](https://hub.docker.com/r/msmbox/msm)
-[![GitHub](https://img.shields.io/badge/GitHub-msm9527%2Fmsm-blue.svg)](https://github.com/msm9527/msm)
+[![GitHub](https://img.shields.io/badge/GitHub-msm9527%2Fmsm-blue.svg)](https://github.com/msm9527/msm-wiki)
 
 **MSM** 是一个功能强大的代理和 DNS 管理工具，集成了 MosDNS、Sing-box 和 Mihomo，提供统一的 Web 管理界面。
 
