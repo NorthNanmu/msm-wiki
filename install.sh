@@ -228,12 +228,19 @@ get_latest_version() {
     local response
 
     if ! response=$(fetch_text "$api_url"); then
-        print_error "无法获取最新版本信息"
-        print_info "可尝试设置 MSM_GITHUB_PROXY 或 GITHUB_PROXY 后重试"
-        exit 1
+        response=""
     fi
 
-    version=$(echo "$response" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    if [ -n "$response" ]; then
+        version=$(echo "$response" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    fi
+
+    if [ -z "$version" ] || ! echo "$version" | grep -Eq '^v?[0-9]+\.[0-9]+\.[0-9]+'; then
+        local html
+        local releases_url="https://github.com/${GITHUB_REPO}/releases/latest"
+        html=$(fetch_text "$releases_url" || true)
+        version=$(echo "$html" | grep -Eo 'releases/tag/v[0-9]+\.[0-9]+\.[0-9]+[^"]*' | head -1 | sed 's#.*/##')
+    fi
 
     if [ -z "$version" ]; then
         print_error "无法获取最新版本信息"
@@ -253,11 +260,11 @@ download_msm() {
 
     # 构建文件名
     local filename
+    local libc_suffix=""
     if [ "$os" = "linux" ] && [ "$libc" = "musl" ]; then
-        filename="msm-${version}-${os}-${arch}-musl.tar.gz"
-    else
-        filename="msm-${version}-${os}-${arch}.tar.gz"
+        libc_suffix="-musl"
     fi
+    filename="msm-${version}-${os}-${arch}${libc_suffix}.tar.gz"
 
     local download_url="https://github.com/${GITHUB_REPO}/releases/download/${version}/${filename}"
 
