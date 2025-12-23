@@ -185,25 +185,29 @@ download_msm() {
 
     print_info "下载 MSM ${version} (${os}-${arch}${libc:+-$libc})..."
     print_info "下载地址: $download_url"
+    echo ""
 
     # 创建临时目录
     local temp_dir=$(mktemp -d)
     cd $temp_dir
 
-    # 下载文件
+    # 下载文件（显示进度条）
     if [ "$DOWNLOAD_CMD" = "wget" ]; then
-        if ! wget -q --show-progress "$download_url" -O "${filename}"; then
+        # wget: 显示进度条、速度、剩余时间
+        if ! wget --progress=bar:force:noscroll "$download_url" -O "${filename}" 2>&1; then
             print_error "下载失败"
             rm -rf $temp_dir
             exit 1
         fi
     else
-        if ! curl -fSL "$download_url" -o "${filename}"; then
+        # curl: 显示详细下载信息（百分比、速度、时间）
+        if ! curl -L "$download_url" -o "${filename}"; then
             print_error "下载失败"
             rm -rf $temp_dir
             exit 1
         fi
     fi
+    echo ""
 
     # 解压文件
     print_info "解压文件..."
