@@ -38,7 +38,10 @@ print_error() {
 check_root() {
     if [ "$EUID" -ne 0 ]; then
         print_error "请使用 root 权限运行此脚本"
-        print_info "使用命令: sudo bash install.sh"
+        print_info "使用以下方式之一运行:"
+        print_info "  方式1: sudo bash install.sh"
+        print_info "  方式2: su root -c 'bash install.sh'"
+        print_info "  方式3: 切换到 root 用户后运行 bash install.sh"
         exit 1
     fi
 }

@@ -35,7 +35,18 @@ MSM 是单一二进制程序，零外部依赖，安装非常简单。
 
 ## 快速安装
 
-### 方式一：一键脚本（推荐）
+### 方式一:一键脚本(推荐)
+
+::: tip root 用户提示
+如果你已经是 root 用户,可以省略 `sudo`,直接运行:
+```bash
+# 使用 curl
+curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | bash
+
+# 或使用 wget
+wget -qO- https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | bash
+```
+:::
 
 ```bash
 # 使用 curl 下载并运行安装脚本
@@ -50,27 +61,35 @@ wget -qO- https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | s
 
 **推荐镜像**（全球加速，国内优选）：
 ```bash
+# 普通用户
 curl -fsSL https://edgeone.gh-proxy.org/https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
+
+# root 用户
+curl -fsSL https://edgeone.gh-proxy.org/https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | bash
 ```
 
 **其他可选镜像**：
 ```bash
-# Fastly CDN
+# Fastly CDN (普通用户)
 curl -fsSL https://hk.gh-proxy.org/https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
 
-# 全球加速（带数据统计）
+# 全球加速（带数据统计）(普通用户)
 curl -fsSL https://cdn.gh-proxy.org/https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
 
-# 国内线路优化（不建议大文件下载）
+# 国内线路优化（不建议大文件下载）(普通用户)
 curl -fsSL https://ghfast.top/https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
 
-# 备用镜像
+# 备用镜像 (普通用户)
 curl -fsSL https://gh-proxy.org/https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
 ```
 
 **IPv6 用户**：
 ```bash
+# 普通用户
 curl -fsSL https://v6.gh-proxy.org/https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
+
+# root 用户
+curl -fsSL https://v6.gh-proxy.org/https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | bash
 ```
 :::
 
