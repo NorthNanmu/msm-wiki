@@ -286,41 +286,41 @@ jobs:
 
           # 创建安装说明文件
           cat > "$DMG_TEMP_DIR/安装说明.txt" << 'EOF'
-将 msm-desktop.app 拖拽到 Applications 文件夹进行安装
+          将 msm-desktop.app 拖拽到 Applications 文件夹进行安装
 
-安装后执行以下命令：
+          安装后执行以下命令：
 
-/usr/bin/xattr -cr "/Applications/msm-desktop.app"
+          /usr/bin/xattr -cr "/Applications/msm-desktop.app"
 
-/usr/bin/codesign -fs - "/Applications/msm-desktop.app"
-EOF
+          /usr/bin/codesign -fs - "/Applications/msm-desktop.app"
+          EOF
 
           # 创建修复脚本
           cat > "$DMG_TEMP_DIR/修复app启动失败.command" << 'EOF'
-#!/bin/bash
-
-echo "正在修复 msm-desktop.app 启动问题..."
-echo ""
-
-if [ ! -d "/Applications/msm-desktop.app" ]; then
-    echo "错误: 未找到 /Applications/msm-desktop.app"
-    echo "请先将应用拖拽到 Applications 文件夹"
-    echo ""
-    read -p "按回车键退出..."
-    exit 1
-fi
-
-echo "步骤 1/2: 移除扩展属性..."
-/usr/bin/xattr -cr "/Applications/msm-desktop.app"
-
-echo "步骤 2/2: 重新签名应用..."
-/usr/bin/codesign -fs - "/Applications/msm-desktop.app"
-
-echo ""
-echo "✅ 修复完成！现在可以启动 msm-desktop 了"
-echo ""
-read -p "按回车键退出..."
-EOF
+          #!/bin/bash
+          
+          echo "正在修复 msm-desktop.app 启动问题..."
+          echo ""
+          
+          if [ ! -d "/Applications/msm-desktop.app" ]; then
+              echo "错误: 未找到 /Applications/msm-desktop.app"
+              echo "请先将应用拖拽到 Applications 文件夹"
+              echo ""
+              read -p "按回车键退出..."
+              exit 1
+          fi
+          
+          echo "步骤 1/2: 移除扩展属性..."
+          /usr/bin/xattr -cr "/Applications/msm-desktop.app"
+          
+          echo "步骤 2/2: 重新签名应用..."
+          /usr/bin/codesign -fs - "/Applications/msm-desktop.app"
+          
+          echo ""
+          echo "✅ 修复完成！现在可以启动 msm-desktop 了"
+          echo ""
+          read -p "按回车键退出..."
+          EOF
 
           chmod +x "$DMG_TEMP_DIR/修复app启动失败.command"
 
