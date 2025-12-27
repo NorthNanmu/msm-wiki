@@ -257,8 +257,16 @@ jobs:
           cp about.html dist/ || true
           cp icon.png dist/ || true
 
-          # 使用 Tauri 构建 DMG，跳过 beforeBuildCommand（前端已构建）
-          npm run tauri build -- --skip-before-build-command --app-version "$VERSION" --app-short-version "$VERSION"
+          # 临时修改 tauri.conf.json，跳过 beforeBuildCommand（前端已构建）
+          TAURI_CONF="$SRC_TAURI_DIR/tauri.conf.json"
+          cp "$TAURI_CONF" "$TAURI_CONF.backup"
+          sed -i.tmp 's/"beforeBuildCommand":[^,]*,/"beforeBuildCommand": "echo Skipping frontend build",/' "$TAURI_CONF"
+
+          # 使用 Tauri 构建 DMG
+          npm run tauri build
+
+          # 恢复原始配置
+          mv "$TAURI_CONF.backup" "$TAURI_CONF"
 
           # 复制生成的 DMG 到 dist 目录
           mkdir -p "$DIST_ROOT"
