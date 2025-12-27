@@ -250,8 +250,8 @@ jobs:
           mkdir -p "$SRC_TAURI_DIR/msm"
 
           # 直接复制已编译的二进制到 src-tauri/msm
-          cp "$DIST_ROOT/msm" "$SRC_TAURI_DIR/msm/msm"
-          chmod +x "$SRC_TAURI_DIR/msm/msm"
+          cp "$DIST_ROOT/msm" "$SRC_TAURI_DIR/msm"
+          chmod +x "$SRC_TAURI_DIR/msm"
 
           # 复制必要的资源文件
           cp about.html dist/ || true
