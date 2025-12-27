@@ -236,14 +236,13 @@ jobs:
           SRC_TAURI_DIR="$WORKSPACE/src-tauri"
           DIST_ROOT="$WORKSPACE/../dist"
 
-          # 确保目录存在；如存在开发用的 msm 可执行文件符号链接，先移除再创建目录
+          # 确保目录存在；如存在开发用的 msm 可执行文件或目录，先移除
           mkdir -p "$SRC_TAURI_DIR"
           if [ -e "$SRC_TAURI_DIR/msm" ] || [ -L "$SRC_TAURI_DIR/msm" ]; then
             rm -rf "$SRC_TAURI_DIR/msm"
           fi
-          mkdir -p "$SRC_TAURI_DIR/msm"
 
-          # 直接复制已编译的二进制到 src-tauri/msm
+          # 直接复制已编译的二进制到 src-tauri/msm（作为文件，不是目录）
           cp "$DIST_ROOT/msm" "$SRC_TAURI_DIR/msm"
           chmod +x "$SRC_TAURI_DIR/msm"
 
