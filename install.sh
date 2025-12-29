@@ -585,7 +585,7 @@ main() {
     echo ""
     echo "=========================================="
     echo "  MSM 一键安装脚本"
-    echo "  Mosdns Singbox Mihomo Manager"
+    echo "  MSM Manager"
     echo "=========================================="
     echo ""
 

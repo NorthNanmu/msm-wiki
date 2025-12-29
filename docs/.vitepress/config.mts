@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "MSM Wiki",
-  description: "Mosdns Singbox Mihomo Manager - 统一管理平台文档",
+  description: "MSM Manager - 统一管理平台文档",
   base: '/msm-wiki/',
   ignoreDeadLinks: true,
 
@@ -153,7 +153,7 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'MSM - 统一管理 MosDNS、SingBox、Mihomo 的平台',
+      message: 'MSM - 统一管理平台',
       copyright: 'Copyright © 2024-present MSM Project'
     },
 

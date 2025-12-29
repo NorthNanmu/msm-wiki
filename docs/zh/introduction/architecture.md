@@ -8,7 +8,7 @@ MSM 由 Web 前端、后端 API、服务管理层和三大核心服务组成：
 
 - **前端**：React + Vite，提供可视化管理界面
 - **后端**：Go + Gin，提供 REST API 与 WebSocket
-- **服务管理层**：统一管理 MosDNS、Sing-box、Mihomo 的启动、停止、重启与状态采集
+- **服务管理层**：统一管理MSM的启动、停止、重启与状态采集
 - **配置与数据**：配置文件与 SQLite 数据库存放在 MSM 数据目录
 
 ```mermaid

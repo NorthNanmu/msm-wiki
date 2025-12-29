@@ -1,6 +1,6 @@
 # 什么是 MSM？
 
-MSM (Mosdns Singbox Mihomo Manager) 是一个统一管理 **MosDNS**、**SingBox**、**Mihomo** 的可视化平台。
+MSM (MSM Manager) 是一个统一管理的可视化平台。
 
 ## 项目背景
 
@@ -34,7 +34,7 @@ MSM (Mosdns Singbox Mihomo Manager) 是一个统一管理 **MosDNS**、**SingBox
 
 通过 WebSocket 实时推送服务状态和日志，及时发现问题。
 
-## 主要功能
+## 主要功能v
 
 ### 服务管理
 

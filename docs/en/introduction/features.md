@@ -5,4 +5,4 @@
 - Configuration history and rollback
 - Real-time logs and system metrics
 - User and permission management
-- Multi-kernel support (Sing-box or Mihomo)
+- Multi-kernel support

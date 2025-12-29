@@ -20,7 +20,7 @@ GitHub Pages 将项目部署在 `https://msm9527.github.io/msm-wiki/` 路径下�
 ```typescript
 export default defineConfig({
   title: "MSM Wiki",
-  description: "Mosdns Singbox Mihomo Manager - 统一管理平台文档",
+  description: "MSM Manager - 统一管理平台文档",
   base: '/msm-wiki/',  // 修改这里
   ignoreDeadLinks: true,
 

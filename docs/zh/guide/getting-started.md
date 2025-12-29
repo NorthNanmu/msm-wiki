@@ -144,7 +144,7 @@ http://your-server-ip:7777
 
 ### 3. 开始使用
 
-登录后即可开始管理 MosDNS、SingBox 和 Mihomo 服务。
+登录后即可开始管理服务。
 
 ## MSM 命令详解
 
