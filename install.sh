@@ -525,6 +525,73 @@ start_service() {
     fi
 }
 
+# 判断是否为公网 IPv4
+is_public_ipv4() {
+    local ip="$1"
+
+    echo "$ip" | grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$' || return 1
+
+    local o1 o2 o3 o4
+    IFS='.' read -r o1 o2 o3 o4 <<< "$ip"
+
+    for o in "$o1" "$o2" "$o3" "$o4"; do
+        [ -n "$o" ] || return 1
+        [ "$o" -ge 0 ] 2>/dev/null && [ "$o" -le 255 ] 2>/dev/null || return 1
+    done
+
+    # 排除私网/保留网段
+    if [ "$o1" -eq 0 ] || [ "$o1" -eq 10 ] || [ "$o1" -eq 127 ]; then
+        return 1
+    fi
+    if [ "$o1" -eq 100 ] && [ "$o2" -ge 64 ] && [ "$o2" -le 127 ]; then
+        return 1
+    fi
+    if [ "$o1" -eq 169 ] && [ "$o2" -eq 254 ]; then
+        return 1
+    fi
+    if [ "$o1" -eq 172 ] && [ "$o2" -ge 16 ] && [ "$o2" -le 31 ]; then
+        return 1
+    fi
+    if [ "$o1" -eq 192 ] && [ "$o2" -eq 168 ]; then
+        return 1
+    fi
+    if [ "$o1" -ge 224 ]; then
+        return 1
+    fi
+
+    return 0
+}
+
+# 获取公网 IPv4（适配国内网络，多源探测并过滤私网/保留地址）
+get_public_ipv4() {
+    local services=(
+        "https://ip.3322.net"
+        "https://4.ipw.cn"
+        "https://myip.ipip.net"
+        "https://pv.sohu.com/cityjson?ie=utf-8"
+        "https://ifconfig.me"
+    )
+
+    for url in "${services[@]}"; do
+        local resp=""
+        local ip=""
+
+        if [ "$DOWNLOAD_CMD" = "wget" ]; then
+            resp=$(wget -qO- --timeout=4 "$url" 2>/dev/null || true)
+        else
+            resp=$(curl -fsSL --connect-timeout 2 --max-time 4 "$url" 2>/dev/null || true)
+        fi
+
+        ip=$(echo "$resp" | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -1)
+        if is_public_ipv4 "$ip"; then
+            echo "$ip"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
 # 显示安装信息
 show_info() {
     # 获取内网 IP 地址
@@ -572,12 +639,7 @@ show_info() {
     # 获取外网 IP 地址
     local wan_ip=""
 
-    # 使用下载命令获取公网 IP
-    if [ "$DOWNLOAD_CMD" = "curl" ]; then
-        wan_ip=$(curl -s --connect-timeout 3 ifconfig.me 2>/dev/null || echo "")
-    elif [ "$DOWNLOAD_CMD" = "wget" ]; then
-        wan_ip=$(wget -qO- --timeout=3 ifconfig.me 2>/dev/null || echo "")
-    fi
+    wan_ip=$(get_public_ipv4 2>/dev/null || echo "")
 
     echo ""
     echo "=========================================="
