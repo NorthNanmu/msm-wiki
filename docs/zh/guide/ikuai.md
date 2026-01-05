@@ -196,20 +196,8 @@ dig google.com
 ## 配置截图
 
 ::: tip 提示
-由于爱快界面可能因版本而异，以下截图仅供参考。
+由于爱快界面可能因版本而异，以下配置步骤以文字说明为主。
 :::
-
-### 静态路由配置
-
-![爱快静态路由](./images/ikuai-route.png)
-
-### DNS 配置
-
-![爱快 DNS 配置](./images/ikuai-dns.png)
-
-### DHCP 配置
-
-![爱快 DHCP 配置](./images/ikuai-dhcp.png)
 
 ## 下一步
 
