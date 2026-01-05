@@ -40,7 +40,8 @@ export default defineConfig({
           text: '快速开始',
           items: [
             { text: '安装部署', link: '/zh/guide/install' },
-            { text: '首次使用', link: '/zh/guide/first-use' }
+            { text: '首次使用', link: '/zh/guide/first-use' },
+            { text: '完整使用流程', link: '/zh/guide/complete-workflow' }
           ]
         },
         {
@@ -57,6 +58,7 @@ export default defineConfig({
           text: '使用指南',
           items: [
             { text: '基础配置', link: '/zh/guide/basic-config' },
+            { text: '配置示例', link: '/zh/guide/config-examples' },
             { text: '设备管理', link: '/zh/guide/device-management' },
             { text: 'MosDNS 管理', link: '/zh/guide/mosdns' },
             { text: 'SingBox 管理', link: '/zh/guide/singbox' },
