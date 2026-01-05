@@ -185,7 +185,7 @@ proxies:
 2. 点击 **重启服务**
 
 ::: tip 提示
-详细的配置示例请参考 [配置示例文档](/zh/guide/config-examples)
+MSM 已内置默认配置，首次使用可以直接使用内置配置。如需自定义配置，请在 MSM 管理界面的配置编辑页面进行修改。
 :::
 
 ## 第六步：测试验证
@@ -293,6 +293,5 @@ dig google.com
 ## 下一步
 
 - [设备管理](/zh/guide/device-management) - 详细的设备管理指南
-- [配置示例](/zh/guide/config-examples) - 完整的配置示例
 - [路由器集成](/zh/guide/router-integration) - 详细的路由器配置
 - [常见问题](/zh/faq/) - 更多问题解答

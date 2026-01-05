@@ -60,7 +60,6 @@ export default defineConfig({
           text: '使用指南',
           items: [
             { text: '基础配置', link: '/zh/guide/basic-config' },
-            { text: '配置示例', link: '/zh/guide/config-examples' },
             { text: '设备管理', link: '/zh/guide/device-management' },
             { text: 'MosDNS 管理', link: '/zh/guide/mosdns' },
             { text: 'SingBox 管理', link: '/zh/guide/singbox' },
