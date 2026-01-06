@@ -14,7 +14,6 @@ NC='\033[0m' # No Color
 
 # 配置变量
 GITHUB_REPO="msm9527/msm-wiki"
-RELEASE_URL="https://github.com/${GITHUB_REPO}/releases/latest"
 SERVICE_NAME="msm"
 MSM_VERSION="${MSM_VERSION:-}"
 GITHUB_PROXY="${MSM_GITHUB_PROXY:-${GITHUB_PROXY:-}}"
