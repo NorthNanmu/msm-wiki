@@ -20,6 +20,7 @@ GITHUB_PROXY="${MSM_GITHUB_PROXY:-${GITHUB_PROXY:-}}"
 GITHUB_PROXY="${GITHUB_PROXY%/}"
 GITHUB_PROXY_CANDIDATES=(
     "$GITHUB_PROXY"
+    "http://152.69.226.93:5000"
     "https://gh-proxy.org"
     "https://edgeone.gh-proxy.org"
     "https://edgecname.gh-proxy.com"
