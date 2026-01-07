@@ -439,14 +439,23 @@ download_msm() {
     print_info "下载地址: $download_url"
     printf '\n' >&2
 
-    # 提示用户可以使用代理加速
-    print_info "提示：如果下载速度较慢，可以："
-    print_info "  1. 按 Ctrl+C 取消，然后设置代理："
-    print_info "     export https_proxy=http://your-proxy:port"
-    print_info "     export http_proxy=http://your-proxy:port"
-    print_info "  2. 或手动指定加速镜像："
-    print_info "     MSM_GITHUB_PROXY=https://gh-proxy.org bash install.sh"
-    print_info "  3. 或手动下载后安装（见文档）"
+    # 检测代理设置并提示
+    local has_proxy=0
+    if [ -n "${http_proxy:-}" ] || [ -n "${https_proxy:-}" ] || [ -n "${all_proxy:-}" ] || \
+       [ -n "${HTTP_PROXY:-}" ] || [ -n "${HTTPS_PROXY:-}" ] || [ -n "${ALL_PROXY:-}" ]; then
+        has_proxy=1
+        print_info "已检测到代理设置，将通过代理下载"
+    else
+        # 提示用户可以使用代理加速
+        print_info "提示：如果下载速度较慢，可以："
+        print_info "  1. 按 Ctrl+C 取消，然后设置代理并使用 sudo -E："
+        print_info "     export https_proxy=http://your-proxy:port"
+        print_info "     export http_proxy=http://your-proxy:port"
+        print_info "     curl -fsSL https://raw.githubusercontent.com/.../install.sh | sudo -E bash"
+        print_info "  2. 或手动指定加速镜像："
+        print_info "     MSM_GITHUB_PROXY=https://gh-proxy.org bash install.sh"
+        print_info "  3. 或手动下载后安装（见文档）"
+    fi
     printf '\n' >&2
 
     # 创建临时目录

@@ -56,6 +56,19 @@ curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | 
 wget -qO- https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
 ```
 
+::: warning 使用代理时的注意事项
+如果你设置了代理环境变量（如 `http_proxy`、`https_proxy`），需要使用 `sudo -E` 来保留环境变量：
+
+```bash
+# 设置代理
+export https_proxy=http://your-proxy:port
+export http_proxy=http://your-proxy:port
+
+# 使用 sudo -E 保留环境变量
+curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo -E bash
+```
+:::
+
 ::: tip 国内加速镜像
 安装脚本已内置 MSM 专用加速链接，会自动加速 MSM 二进制文件下载。如果 GitHub 访问速度较慢，可以使用以下加速镜像下载安装脚本：
 
