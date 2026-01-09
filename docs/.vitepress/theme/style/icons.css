@@ -208,7 +208,7 @@
 .vp-doc div[class*='language-'] button.copy {
   position: absolute;
   top: var(--msm-space-3);
-  right: var(--msm-space-16);
+  right: var(--msm-space-3);
   width: 32px;
   height: 32px;
   border-radius: var(--msm-radius-md);
@@ -222,6 +222,7 @@
   align-items: center;
   justify-content: center;
   opacity: 0;
+  z-index: 20; /* 确保在语言标签上方 */
 }
 
 .vp-doc div[class*='language-']:hover button.copy {
@@ -277,21 +278,7 @@
 .vp-doc h2 .header-anchor,
 .vp-doc h3 .header-anchor,
 .vp-doc h4 .header-anchor {
-  opacity: 0;
-  margin-left: var(--msm-space-2);
-  color: var(--msm-c-brand);
-  transition: all 0.3s var(--msm-fluid-ease);
-}
-
-.vp-doc h2:hover .header-anchor,
-.vp-doc h3:hover .header-anchor,
-.vp-doc h4:hover .header-anchor {
-  opacity: 1;
-}
-
-.vp-doc .header-anchor:hover {
-  color: var(--msm-c-brand-light);
-  transform: scale(1.2);
+  display: none; /* 完全隐藏锚点符号 */
 }
 
 /* ==================== 表格图标优化 ==================== */
