@@ -42,10 +42,10 @@ body {
 
 /* ==================== 标题样式优化 ==================== */
 
-/* 极致紧凑的标题间距 */
+/* 极致紧凑的标题间距 - 优化版 */
 .vp-doc h1 {
   margin-top: var(--msm-space-6);
-  margin-bottom: var(--msm-space-4);
+  margin-bottom: var(--msm-space-5);
   font-size: var(--msm-font-size-4xl);
   font-weight: var(--msm-font-weight-bold);
   line-height: var(--msm-line-height-tight);
@@ -53,9 +53,9 @@ body {
 }
 
 .vp-doc h2 {
-  margin-top: var(--msm-space-8);
-  margin-bottom: var(--msm-space-3);
-  padding-top: var(--msm-space-4);
+  margin-top: var(--msm-space-10);
+  margin-bottom: var(--msm-space-4);
+  padding-top: var(--msm-space-6);
   font-size: var(--msm-font-size-2xl);
   font-weight: var(--msm-font-weight-bold);
   line-height: var(--msm-line-height-tight);
@@ -65,28 +65,42 @@ body {
 .vp-doc h2:first-child {
   border-top: none;
   padding-top: 0;
+  margin-top: 0;
 }
 
 .vp-doc h3 {
-  margin-top: var(--msm-space-6);
-  margin-bottom: var(--msm-space-2);
+  margin-top: var(--msm-space-8);
+  margin-bottom: var(--msm-space-3);
   font-size: var(--msm-font-size-xl);
   font-weight: var(--msm-font-weight-semibold);
   line-height: var(--msm-line-height-snug);
 }
 
 .vp-doc h4 {
-  margin-top: var(--msm-space-5);
-  margin-bottom: var(--msm-space-2);
+  margin-top: var(--msm-space-6);
+  margin-bottom: var(--msm-space-3);
   font-size: var(--msm-font-size-lg);
   font-weight: var(--msm-font-weight-semibold);
 }
 
+/* 隐藏标题锚点,只在hover时显示 */
+.vp-doc .header-anchor {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.vp-doc h1:hover .header-anchor,
+.vp-doc h2:hover .header-anchor,
+.vp-doc h3:hover .header-anchor,
+.vp-doc h4:hover .header-anchor {
+  opacity: 1;
+}
+
 /* ==================== 段落和文本优化 ==================== */
 
-/* 极致紧凑的段落和列表 */
+/* 极致紧凑的段落和列表 - 优化版 */
 .vp-doc p {
-  margin: var(--msm-space-2) 0;
+  margin: var(--msm-space-3) 0;
   line-height: var(--msm-line-height-normal);
 }
 
@@ -103,29 +117,30 @@ body {
 
 .vp-doc a:hover {
   color: var(--msm-c-brand-light);
+  text-decoration: underline;
 }
 
 /* ==================== 列表优化 ==================== */
 
 .vp-doc ul,
 .vp-doc ol {
-  margin: var(--msm-space-2) 0;
-  padding-left: var(--msm-space-5);
+  margin: var(--msm-space-3) 0;
+  padding-left: var(--msm-space-6);
 }
 
 .vp-doc li {
-  margin: var(--msm-space-1) 0;
-  line-height: var(--msm-line-height-normal);
+  margin: var(--msm-space-2) 0;
+  line-height: var(--msm-line-height-relaxed);
 }
 
 .vp-doc li > p {
-  margin: 0;
+  margin: var(--msm-space-1) 0;
 }
 
 /* 嵌套列表 */
 .vp-doc li > ul,
 .vp-doc li > ol {
-  margin: var(--msm-space-1) 0;
+  margin: var(--msm-space-2) 0;
 }
 
 /* ==================== 代码块优化 ==================== */
@@ -179,12 +194,21 @@ body {
 
 /* 复制按钮优化 */
 .vp-doc div[class*='language-'] button.copy {
+  position: absolute;
+  top: var(--msm-space-3);
+  right: var(--msm-space-3);
   opacity: 0;
   transition: opacity var(--msm-transition-fast);
+  z-index: 3;
 }
 
 .vp-doc div[class*='language-']:hover button.copy {
   opacity: 1;
+}
+
+/* 确保复制按钮不被语言标识遮挡 */
+.vp-doc div[class*='language-'] .lang {
+  right: var(--msm-space-12);
 }
 
 /* ==================== 表格优化 ==================== */
