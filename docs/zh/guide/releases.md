@@ -10,11 +10,12 @@
 
 ## 🚀 最新版本
 
+
 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 12px; color: white; margin: 2rem 0;">
   <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
     <div>
       <h3 style="margin: 0; color: white; font-size: 2rem;">v0.7.5</h3>
-      <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">发布日期：2026-01-09 11:28</p>
+      <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">发布日期：2026-01-09 03:28</p>
     </div>
     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
       <a href="https://github.com/msm9527/msm-wiki/releases/tag/0.7.5" target="_blank" style="background: white; color: #667eea; padding: 0.5rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: 600; display: inline-block;">
@@ -27,31 +28,74 @@
   </div>
 </div>
 
-::: tip ✨ 新增功能
-**UI 全面升级**
-- 🎨 登录与 Setup 页 UI 全量重制：左右分栏、动画 Logo、统一配色与文案
-- 🌍 Setup 界面时区设置更改系统全局
-- 📦 登录页依赖裁剪、无用组件移除，前端包体减小
+### ✨ 新增（Added）
+- 新增0.7.2-0.7.5发布说明
+- 设计 DNS 分流动画 logo
+- 全面美化登录界面
+- 重新设计顶部导航栏用户菜单
+- 全面美化 setup 页面视觉效果
+- 优化 setup 页面整体布局和自适应
+- 支持 hysteria2 分享链接
+- 支持自定义节点(分享链接/YAML)
+- 系统更新后自动升级合并配置（mosdns）
+- 增加 --help-all 输出全量帮助
+- 增加 mihomo 配置升级合并用例
 
-**性能优化**
-- ⚡ 时区���步流程改为非阻塞，降低启动卡顿
-- 🧹 同步方案包清理为历史
-:::
+### 🔧 变更（Changed）
+- 统一移动端和桌面端动画速度
+- 调慢移动端 logo 动画速度
+- 优化 logo 动画，移除文字标签，增强视觉效果
+- 归一化CPU占用为总核百分比
+- 优化导航用户菜单对齐与滚动表现
+- 简化用户菜单并恢复主题/语言切换按钮
+- 增强登录页 Logo 动态效果
+- 移除登录页未使用的组件引用
+- 调整登录界面文案和布局
+- 重新设计登录界面为左右分栏布局
+- make timezone application non-blocking
+- remove migrated timezone plan
+- archive timezone sync plan
+- apply system timezone to host
+- 调整时区选择选项
+- 优化下拉框样式和显示效果
+- 修复 setup 界面开关垂直对齐问题
+- 修复 MosDNS 区域右侧标签垂直对齐问题
+- 优化自定义节点区域图标
+- 优化自定义节点编辑器图标
+- 美化自定义节点编辑器界面
+- 将全局接口限流上调至每分钟300次
+- 放行 mihomo delay 测速接口不计入全局限流
+- 自定义节点支持列表增删改
+- 扩展分享链接协议支持
+- 升级后仅在运行时重启服务
+- 未初始化时跳过配置升级
 
-::: info 🐛 问题修复
-- ✅ 修复移动端动画效果问题
-- ✅ 登录页布局/文案细节与未使用引用清理
-- ✅ 时区应用异常对运行的影响降级为警告
-:::
+### 🐛 修复（Fixed）
+- 修复移动端动画被全局规则覆盖的问题
+- 修复用户菜单下拉框右侧空白问题
+- 修复导航栏用户菜单相关问题
+- 修复 setup 界面开关垂直对齐问题
+- 修复 MosDNS 区域右侧标签垂直对齐问题
+- 优化移动端 logo 动画性能
+- 下载策略优先级按用户配置>内置>直连
+- 下载停滞判定改为10s并默认启用代理配置
+- sysctl 写入补换行校验
 
-::: warning 🧪 实验性功能
-- 🔧 Mihomo 规则/Provider 编辑器继续迭代：多处交互微调与默认值完善
-- 🔄 系统升级 Mihomo 会进行自动配置合并
-- 🔄 系统升级 MosDNS 会进行配置自动升级
-:::
-
----
-
+### ⚠️ 废弃（Deprecated）
+- 归档CPU口径方案包
+- 归档timezone sync plan
+- Revert "fix(mihomo): delay测速遇429时本地重试并屏蔽限流错误"
+- Revert "fix(mihomo): delay测速2秒内复用缓存避免触发429"
+    
+    ::: details 📋 构建信息
+    - **源提交**: [`66341bc`](https://github.com/msm9527/msm/commit/66341bce8cefcc09813509fbce3db462628be62c)
+    - **提交信息**: 0.7.5
+    - **提交作者**: doumao
+    - **提交时间**: 2026-01-09 11:28:31 +0800
+    :::
+    
+    ---
+    
 ## 📚 历史版本
 
 <details>
