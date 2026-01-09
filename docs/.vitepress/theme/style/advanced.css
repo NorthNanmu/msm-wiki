@@ -406,11 +406,16 @@
   );
 }
 
-/* ==================== 选中文本 - 渐变 ==================== */
+/* ==================== 选中文本 - 高对比度 ==================== */
 
 ::selection {
-  background: var(--msm-gradient-brand);
-  color: white;
+  background: rgba(37, 99, 235, 0.3);
+  color: var(--msm-c-text-1);
+}
+
+.dark ::selection {
+  background: rgba(59, 130, 246, 0.4);
+  color: var(--msm-c-text-1);
 }
 
 /* ==================== 页面加载动画 ==================== */
