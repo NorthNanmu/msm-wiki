@@ -839,6 +839,28 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: 构建 supervisord（嵌入资源，用于桌面版）
+        shell: bash
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          set -euo pipefail
+          SUPERVISORD_COMMIT="$(head -n 1 backend/cmd/msm/.supervisord.version | tr -d '\r\n')"
+          if [ -z "${SUPERVISORD_COMMIT}" ]; then
+            echo "error: backend/cmd/msm/.supervisord.version 为空" >&2
+            exit 1
+          fi
+          echo "supervisord commit: ${SUPERVISORD_COMMIT}"
+
+          rm -rf /tmp/supervisord
+          git clone https://github.com/ochinchina/supervisord.git /tmp/supervisord
+          git -C /tmp/supervisord checkout "${SUPERVISORD_COMMIT}"
+
+          (cd /tmp/supervisord && go build -ldflags="-s -w" -o supervisord)
+          cp /tmp/supervisord/supervisord backend/cmd/msm/supervisord
+
       - name: 构建前端并复制到后端（嵌入资源）
         shell: bash
         run: |
