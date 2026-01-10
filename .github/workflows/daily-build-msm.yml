@@ -375,71 +375,9 @@ jobs:
           cd ..
           chmod +x dist/msm
 
-          # macOS 需要保留二进制用于 Tauri 构建，稍后再打包
-          if [ "${{ matrix.goos }}" != "darwin" ]; then
-            tar -czf "dist/msm-${VERSION}-${{ matrix.target }}.tar.gz" -C dist msm
-            rm -f dist/msm
-          fi
-
-      # macOS 桌面应用构建
-      - name: Setup Rust (macOS only)
-        if: matrix.goos == 'darwin'
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: 构建 Tauri 桌面应用 (macOS only)
-        if: matrix.goos == 'darwin'
-        shell: bash
-        run: |
-          set -euo pipefail
-          VERSION="${{ needs.prepare.outputs.version }}"
-
-          export TAURI_APP_VERSION="${VERSION}"
-          export TAURI_BUILD_VERSION="${VERSION}"
-
-          cd frontend
-
-          # 安装前端依赖（确保 Tauri 构建环境）
-          npm ci --no-audit --no-fund
-
-          WORKSPACE="$PWD"
-          SRC_TAURI_DIR="$WORKSPACE/src-tauri"
-          DIST_ROOT="$WORKSPACE/../dist"
-
-          # 确保目录存在；如存在开发用的 msm 可执行文件或目录，先移除
-          mkdir -p "$SRC_TAURI_DIR"
-          if [ -e "$SRC_TAURI_DIR/msm" ] || [ -L "$SRC_TAURI_DIR/msm" ]; then
-            rm -rf "$SRC_TAURI_DIR/msm"
-          fi
-
-          # 直接复制已编译的二进制到 src-tauri/msm（作为文件，不是目录）
-          cp "$DIST_ROOT/msm" "$SRC_TAURI_DIR/msm"
-          chmod +x "$SRC_TAURI_DIR/msm"
-
-          # 复制必要的资源文件
-          cp about.html dist/ || true
-          cp icon.png dist/ || true
-
-          # 临时修改 tauri.conf.json，跳过 beforeBuildCommand（前端已构建）
-          TAURI_CONF="$SRC_TAURI_DIR/tauri.conf.json"
-          cp "$TAURI_CONF" "$TAURI_CONF.backup"
-          sed -i.tmp 's/"beforeBuildCommand":[^,]*,/"beforeBuildCommand": "echo Skipping frontend build",/' "$TAURI_CONF"
-
-          # 使用 Tauri 构建 DMG
-          npm run tauri build
-
-          # 恢复原始配置
-          mv "$TAURI_CONF.backup" "$TAURI_CONF"
-
-          # 复制 DMG 到 dist 目录
-          mkdir -p "$DIST_ROOT"
-          cp "$SRC_TAURI_DIR/target/release/bundle/dmg"/*.dmg "$DIST_ROOT/msm-desktop-${VERSION}-${{ matrix.target }}.dmg"
-
-          # 打包二进制 tar.gz
-          cd "$DIST_ROOT"
-          tar -czf "msm-${VERSION}-${{ matrix.target }}.tar.gz" msm
-          rm -f msm
-
-          ls -l "$DIST_ROOT"
+          # 统一打包 CLI 二进制为 tar.gz（macOS / Linux 一致）
+          tar -czf "dist/msm-${VERSION}-${{ matrix.target }}.tar.gz" -C dist msm
+          rm -f dist/msm
 
       - name: 上传构建产物 - 二进制 (macOS)
         if: matrix.goos == 'darwin'
@@ -447,14 +385,6 @@ jobs:
         with:
           name: msm-${{ needs.prepare.outputs.version }}-${{ matrix.target }}
           path: dist/msm-${{ needs.prepare.outputs.version }}-${{ matrix.target }}.tar.gz
-          if-no-files-found: error
-
-      - name: 上传构建产物 - DMG (macOS)
-        if: matrix.goos == 'darwin'
-        uses: actions/upload-artifact@v4
-        with:
-          name: msm-desktop-${{ needs.prepare.outputs.version }}-${{ matrix.target }}
-          path: dist/msm-desktop-${{ needs.prepare.outputs.version }}-${{ matrix.target }}.dmg
           if-no-files-found: error
 
       - name: 上传构建产物 (Linux)
@@ -672,7 +602,6 @@ jobs:
           replacesArtifacts: true
           artifacts: |
             dist/**/msm-${{ needs.prepare.outputs.version }}-*.tar.gz
-            dist/**/msm-desktop-${{ needs.prepare.outputs.version }}-*.dmg
 
       - name: 更新 Wiki 版本发布页面
         uses: actions/github-script@v7
@@ -867,3 +796,120 @@ jobs:
           echo "使用方式:"
           echo "  docker pull msmbox/msm:latest"
           echo "  docker run -d -p 7777:7777 msmbox/msm:latest"
+
+  desktop:
+    name: 构建 macOS 桌面应用并追加到 Release
+    needs: [prepare, release]
+    runs-on: macos-15
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: darwin-amd64
+            goos: darwin
+            goarch: amd64
+          - target: darwin-arm64
+            goos: darwin
+            goarch: arm64
+    steps:
+      - name: Checkout MSM 仓库
+        uses: actions/checkout@v4
+        with:
+          repository: msm9527/msm
+          ref: ${{ inputs.branch || 'main' }}
+          token: ${{ secrets.MSM_REPO_TOKEN }}
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25.5"
+          check-latest: true
+          cache: true
+          cache-dependency-path: backend/go.sum
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 编译 MSM （用于 Tauri 打包）
+        shell: bash
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cd backend
+          go build -ldflags="-s -w" -o ../dist/msm ./cmd/msm
+          cd ..
+          chmod +x dist/msm
+
+      - name: 构建 Tauri 桌面应用
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ needs.prepare.outputs.version }}"
+
+          export TAURI_APP_VERSION="${VERSION}"
+          export TAURI_BUILD_VERSION="${VERSION}"
+
+          cd frontend
+
+          # 安装前端依赖（确保 Tauri 构建环境）
+          npm ci --no-audit --no-fund
+
+          WORKSPACE="$PWD"
+          SRC_TAURI_DIR="$WORKSPACE/src-tauri"
+          DIST_ROOT="$WORKSPACE/../dist"
+
+          # 确保目录存在；如存在开发用的 msm 可执行文件或目录，先移除
+          mkdir -p "$SRC_TAURI_DIR"
+          if [ -e "$SRC_TAURI_DIR/msm" ] || [ -L "$SRC_TAURI_DIR/msm" ]; then
+            rm -rf "$SRC_TAURI_DIR/msm"
+          fi
+
+          # 复制编译好的二进制到 src-tauri/msm
+          cp "$DIST_ROOT/msm" "$SRC_TAURI_DIR/msm"
+          chmod +x "$SRC_TAURI_DIR/msm"
+
+          # 复制必要的资源文件（存在才复制）
+          cp about.html dist/ || true
+          cp icon.png dist/ || true
+
+          # 跳过重复的前端构建
+          TAURI_CONF="$SRC_TAURI_DIR/tauri.conf.json"
+          cp "$TAURI_CONF" "$TAURI_CONF.backup"
+          sed -i.tmp 's/"beforeBuildCommand":[^,]*,/"beforeBuildCommand": "echo Skipping frontend build",/' "$TAURI_CONF"
+
+          # 使用 Tauri 构建 DMG
+          npm run tauri build
+
+          # 恢复原始配置
+          mv "$TAURI_CONF.backup" "$TAURI_CONF"
+
+          # 复制 DMG 到 dist 目录，文件名带上架构
+          mkdir -p "$DIST_ROOT"
+          cp "$SRC_TAURI_DIR/target/release/bundle/dmg"/*.dmg "$DIST_ROOT/msm-desktop-${VERSION}-${{ matrix.target }}.dmg"
+
+      - name: 上传桌面应用 DMG 产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: msm-desktop-${{ needs.prepare.outputs.version }}-${{ matrix.target }}
+          path: dist/msm-desktop-${{ needs.prepare.outputs.version }}-${{ matrix.target }}.dmg
+          if-no-files-found: ignore
+
+      - name: 将 DMG 附加到已有 Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.prepare.outputs.version }}
+          files: dist/msm-desktop-${{ needs.prepare.outputs.version }}-${{ matrix.target }}.dmg
+          fail_on_unmatched_files: false
