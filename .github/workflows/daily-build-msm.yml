@@ -613,10 +613,11 @@ jobs:
             const path = require('path');
 
             const version = '${{ needs.prepare.outputs.version }}';
-            const aiSummary = `${{ needs.prepare.outputs.ai_summary }}`;
+            const aiSummary = ${{ toJSON(needs.prepare.outputs.ai_summary) }};
             const commitSha = '${{ needs.prepare.outputs.commit_sha_short }}';
-            const commitMessage = '${{ needs.prepare.outputs.commit_message }}';
-            const commitAuthor = '${{ needs.prepare.outputs.commit_author }}';
+            const commitShaFull = '${{ needs.prepare.outputs.commit_sha }}';
+            const commitMessage = ${{ toJSON(needs.prepare.outputs.commit_message) }};
+            const commitAuthor = ${{ toJSON(needs.prepare.outputs.commit_author) }};
             const commitDate = '${{ needs.prepare.outputs.commit_date }}';
 
             // 读取现有的版本发布页面
@@ -645,7 +646,7 @@ jobs:
             ${aiSummary}
             
             ::: details 📋 构建信息
-            - **源提交**: [\`${commitSha}\`](https://github.com/msm9527/msm/commit/${{ needs.prepare.outputs.commit_sha }})
+            - **源提交**: [\`${commitSha}\`](https://github.com/msm9527/msm/commit/${commitShaFull})
             - **提交信息**: ${commitMessage}
             - **提交作者**: ${commitAuthor}
             - **提交时间**: ${commitDate}
