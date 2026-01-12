@@ -882,11 +882,13 @@ jobs:
           fi
 
           VERSION="${{ needs.prepare.outputs.version }}"
+          TARGET="${SERVER_TARGET%/}"
+          RSYNC_SSH="ssh -o StrictHostKeyChecking=no"
 
-          sshpass -p "${SERVER_PASSWORD}" ssh -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_HOST}" "mkdir -p '${SERVER_TARGET}' '${SERVER_TARGET}/${VERSION}'"
+          sshpass -p "${SERVER_PASSWORD}" ssh -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_HOST}" "mkdir -p \"${TARGET}\" \"${TARGET}/${VERSION}\""
 
-          sshpass -p "${SERVER_PASSWORD}" rsync -avz --no-perms --no-owner --no-group -e "ssh -o StrictHostKeyChecking=no" upload/.version "${SERVER_USER}@${SERVER_HOST}:'${SERVER_TARGET}/'"
-          sshpass -p "${SERVER_PASSWORD}" rsync -avz --no-perms --no-owner --no-group -e "ssh -o StrictHostKeyChecking=no" upload/${VERSION}/ "${SERVER_USER}@${SERVER_HOST}:'${SERVER_TARGET}/${VERSION}/'"
+          sshpass -p "${SERVER_PASSWORD}" rsync -avz --no-perms --no-owner --no-group -e "${RSYNC_SSH}" --rsync-path="mkdir -p \"${TARGET}\" && rsync" upload/.version "${SERVER_USER}@${SERVER_HOST}:${TARGET}/"
+          sshpass -p "${SERVER_PASSWORD}" rsync -avz --no-perms --no-owner --no-group -e "${RSYNC_SSH}" --rsync-path="mkdir -p \"${TARGET}/${VERSION}\" && rsync" upload/${VERSION}/ "${SERVER_USER}@${SERVER_HOST}:${TARGET}/${VERSION}/"
 
           echo "✅ 已将 .version 和打包产物上传至 ${SERVER_HOST}:${SERVER_TARGET}"
           echo "使用方式:"
