@@ -867,30 +867,57 @@ jobs:
           sudo apt-get install -y sshpass rsync
 
       - name: 传输到目标服务器
-        env:
-          SERVER_HOST: ${{ secrets.DEPLOY_SERVER_HOST }}
-          SERVER_USER: ${{ secrets.DEPLOY_SERVER_USER }}
-          SERVER_PASSWORD: ${{ secrets.DEPLOY_SERVER_PASSWORD }}
-          SERVER_TARGET: ${{ secrets.DEPLOY_TARGET_PATH }}
         shell: bash
+        env:
+          EXTRA_SERVERS: ${{ secrets.DEPLOY_SERVERS }}
         run: |
           set -euo pipefail
 
-          if [ -z "${SERVER_HOST}" ] || [ -z "${SERVER_USER}" ] || [ -z "${SERVER_PASSWORD}" ] || [ -z "${SERVER_TARGET}" ]; then
-            echo "服务器信息未配置(DEPLOY_SERVER_* secrets 缺失)，跳过上传"
+          VERSION="${{ needs.prepare.outputs.version }}"
+          RSYNC_SSH="ssh -o StrictHostKeyChecking=no"
+
+          # 仅使用 DEPLOY_SERVERS 多行配置：host,user,password,target_path[,port]
+          servers=()
+          if [ -n "${EXTRA_SERVERS}" ]; then
+            while IFS= read -r line; do
+              line_trimmed="$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+              [ -z "$line_trimmed" ] && continue
+              servers+=("$line_trimmed")
+            done <<< "${EXTRA_SERVERS}"
+          fi
+
+          if [ ${#servers[@]} -eq 0 ]; then
+            echo "未提供服务器信息（请在 secrets 中设置 DEPLOY_SERVERS，多行 host,user,password,target_path[,port]）"
             exit 0
           fi
 
-          VERSION="${{ needs.prepare.outputs.version }}"
-          TARGET="${SERVER_TARGET%/}"
-          RSYNC_SSH="ssh -o StrictHostKeyChecking=no"
+          echo "即将上传到 ${#servers[@]} 个服务器:"
+          for entry in "${servers[@]}"; do
+            IFS=',' read -r host user pass target port <<< "$entry"
+            safe_host="$(echo "$host" | sed -E 's/^(.{0,3}).*(.)$/\1*******\2/')"
+            echo " - ${safe_host}"
+          done
 
-          sshpass -p "${SERVER_PASSWORD}" ssh -o StrictHostKeyChecking=no "${SERVER_USER}@${SERVER_HOST}" "mkdir -p \"${TARGET}\" \"${TARGET}/${VERSION}\""
+          for entry in "${servers[@]}"; do
+            IFS=',' read -r host user pass target port <<< "$entry"
+            if [ -z "${host}" ] || [ -z "${user}" ] || [ -z "${pass}" ] || [ -z "${target}" ]; then
+              echo "跳过无效配置"
+              continue
+            fi
 
-          sshpass -p "${SERVER_PASSWORD}" rsync -avz --no-perms --no-owner --no-group -e "${RSYNC_SSH}" --rsync-path="mkdir -p \"${TARGET}\" && rsync" upload/.version "${SERVER_USER}@${SERVER_HOST}:${TARGET}/"
-          sshpass -p "${SERVER_PASSWORD}" rsync -avz --no-perms --no-owner --no-group -e "${RSYNC_SSH}" --rsync-path="mkdir -p \"${TARGET}/${VERSION}\" && rsync" upload/${VERSION}/ "${SERVER_USER}@${SERVER_HOST}:${TARGET}/${VERSION}/"
+            TARGET="${target%/}"
+            PORT_OPT=""
+            if [ -n "${port}" ]; then
+              PORT_OPT="-p ${port}"
+            fi
 
-          echo "✅ 已将 .version 和打包产物上传至 ${SERVER_HOST}:${SERVER_TARGET}"
+            sshpass -p "${pass}" ssh -o StrictHostKeyChecking=no ${PORT_OPT} "${user}@${host}" "mkdir -p \"${TARGET}\" \"${TARGET}/${VERSION}\""
+
+            sshpass -p "${pass}" rsync -avz --no-perms --no-owner --no-group -e "${RSYNC_SSH} ${PORT_OPT}" --rsync-path="mkdir -p \"${TARGET}\" && rsync" upload/.version "${user}@${host}:${TARGET}/"
+            sshpass -p "${pass}" rsync -avz --no-perms --no-owner --no-group -e "${RSYNC_SSH} ${PORT_OPT}" --rsync-path="mkdir -p \"${TARGET}/${VERSION}\" && rsync" upload/${VERSION}/ "${user}@${host}:${TARGET}/${VERSION}/"
+          done
+
+          echo "✅ 已将 .version 和打包产物上传至所有服务器"
           echo "使用方式:"
           echo "  docker pull msmbox/msm:latest"
           echo "  docker run -d -p 7777:7777 msmbox/msm:latest"
