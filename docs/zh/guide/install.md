@@ -81,6 +81,9 @@ wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm
 
 # 国内专用脚本（自动使用镜像版本/二进制）
 curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
+
+# 镜像直链版（简化入口）
+curl -fsSL https://msm.19930520.xyz/dl/install.sh | sudo bash
 ```
 
 > 提示：如果你已在终端导出 `http_proxy`/`https_proxy`，上述命令会自动使用这些代理。
