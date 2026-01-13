@@ -60,9 +60,9 @@ jobs:
 
           echo "即将上传到 ${#servers[@]} 个服务器:"
           for entry in "${servers[@]}"; do
-            # 避免完整泄露，host 中间三位替换为 ***
             IFS=',' read -r host user pass target port <<< "$entry"
-            safe_host="$(echo "$host" | sed 's/\\([0-9A-Za-z]\\{1,3\\}\\)[0-9A-Za-z]\\{3\\}/\\1***/')"
+            # 掩码：首段保留3字符，尾段保留1字符，中间替换为*******
+            safe_host="$(echo "$host" | sed -E 's/^(.{0,3}).*(.)$/\\1*******\\2/')"
             echo " - ${safe_host}"
           done
 
