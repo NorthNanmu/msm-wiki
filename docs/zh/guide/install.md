@@ -70,14 +70,17 @@ curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | 
 :::
 
 ::: tip 国内加速（可选）
-直连 GitHub 较慢时，可使用社区加速镜像下载安装脚本：
+直连 GitHub 较慢时，可使用社区加速镜像或国内专用脚本：
 
 ```bash
-# curl（普通用户）
+# 镜像获取官方脚本（curl）
 curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | sudo bash
 
-# wget（普通用户）
+# 镜像获取官方脚本（wget）
 wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | sudo bash
+
+# 国内专用脚本（自动使用镜像版本/二进制）
+curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
 ```
 
 > 提示：如果你已在终端导出 `http_proxy`/`https_proxy`，上述命令会自动使用这些代理。

@@ -126,6 +126,9 @@ curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/ms
 
 # wget
 wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | sudo bash
+
+# 或直接使用国内专用脚本（自动走镜像下载二进制）
+curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
 ```
 :::
 
