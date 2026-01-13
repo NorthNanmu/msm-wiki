@@ -20,7 +20,6 @@ GITHUB_PROXY="${MSM_GITHUB_PROXY:-${GITHUB_PROXY:-}}"
 GITHUB_PROXY="${GITHUB_PROXY%/}"
 GITHUB_PROXY_CANDIDATES=(
     "$GITHUB_PROXY"
-    "http://152.69.226.93:5000"
     "https://gh-proxy.org"
     "https://edgeone.gh-proxy.org"
     "https://edgecname.gh-proxy.com"
@@ -141,8 +140,6 @@ fetch_text() {
         if [ "$show_progress" = "true" ]; then
             if [ $attempt -eq 1 ] && [ $has_proxy -eq 1 ]; then
                 print_info "通过代理获取..."
-            elif [ $attempt -eq 1 ] && [[ "$u" == *"152.69.226.93:5000"* ]]; then
-                print_info "使用 MSM 专用加速获取..."
             elif [ $attempt -gt 1 ]; then
                 print_info "尝试备用镜像 ($attempt)..."
             fi
@@ -219,8 +216,6 @@ download_with_fallback() {
         # 显示下载提示
         if [ $attempt -eq 1 ] && [ $has_proxy -eq 1 ]; then
             print_info "通过代理下载..."
-        elif [ $attempt -eq 1 ] && [[ "$u" == *"152.69.226.93:5000"* ]]; then
-            print_info "使用 MSM 专用加速下载..."
         elif [ $attempt -eq 1 ]; then
             print_info "开始下载..."
         else

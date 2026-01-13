@@ -108,7 +108,7 @@ curl -fsSL https://v6.gh-proxy.org/https://raw.githubusercontent.com/msm9527/msm
 **手动指定 MSM 专用加速**（用于加速二进制文件下载）：
 ```bash
 # 安装脚本会自动使用 MSM 专用加速下载二进制文件
-MSM_GITHUB_PROXY=http://152.69.226.93:5000 curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
+MSM_GITHUB_PROXY=https://gh-proxy.org curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
 ```
 :::
 
