@@ -81,6 +81,10 @@ curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | 
 curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | sudo bash
 # root 用户
 curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | bash
+# 镜像获取官方脚本（wget，sudo）
+wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | sudo bash
+# root 用户
+wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | bash
 
 # 镜像获取官方脚本（wget）
 wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | sudo bash
@@ -91,14 +95,23 @@ wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm
 curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
 # root 用户
 curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | bash
+# wget（sudo）
+wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
+# root 用户
+wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | bash
 
 # 镜像直链版（简化入口）
 curl -fsSL https://msm.19930520.xyz/dl/install.sh | sudo bash
 # root 用户
 curl -fsSL https://msm.19930520.xyz/dl/install.sh | bash
+# wget（sudo）
+wget -qO- https://msm.19930520.xyz/dl/install.sh | sudo bash
+# root 用户
+wget -qO- https://msm.19930520.xyz/dl/install.sh | bash
 ```
 
 > 提示：如果你已在终端导出 `http_proxy`/`https_proxy`，上述命令会自动使用这些代理。
+> 工具可用性建议：Debian/Ubuntu/Alpine 最小镜像通常预装 `wget` 而未必有 `curl`；CentOS/RHEL/Fedora 常见预装 `curl`；macOS 预装 `curl`。缺失时先用包管理器安装对应工具再执行以上命令。
 :::
 
 ::: tip 指定版本安装

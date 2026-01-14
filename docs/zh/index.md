@@ -139,12 +139,22 @@ wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm
 curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
 # root 用户
 curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | bash
+# wget（sudo）
+wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
+# root 用户
+wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | bash
 
 # 镜像直链版（等价，用于部分环境更快）
 curl -fsSL https://msm.19930520.xyz/dl/install.sh | sudo bash
 # root 用户
 curl -fsSL https://msm.19930520.xyz/dl/install.sh | bash
+# wget（sudo）
+wget -qO- https://msm.19930520.xyz/dl/install.sh | sudo bash
+# root 用户
+wget -qO- https://msm.19930520.xyz/dl/install.sh | bash
 ```
+
+> 系统自带工具小贴士：Debian/Ubuntu/Alpine 最小镜像通常预装 `wget` 而不一定有 `curl`；CentOS/RHEL/Fedora 常见预装 `curl`；macOS 预装 `curl`。缺少对应工具时可先用包管理器安装（如 `apt-get install curl` 或 `yum install wget`）。
 :::
 
 安装完成后访问 `http://your-server-ip:7777`
