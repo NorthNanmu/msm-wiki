@@ -63,20 +63,11 @@ add disabled=no distance=1 dst-address=109.239.140.0/24 gateway=192.168.20.2 sco
 Telegram IP 路由是可选的，用于确保 Telegram 的 IP 直连也走代理。如果不使用 Telegram，可以跳过这一步。
 :::
 
-### 步骤二：配置 DNS
+### 步骤二：配置 DHCP DNS
 
-#### 1. 修改 RouterOS DNS 设置
+#### 1. 保持 RouterOS DNS（路由器自身）
 
-进入 `IP > DNS`，将 DNS 服务器设置为 MSM 主机 IP：
-
-**Web 界面配置**：
-- Servers: `192.168.20.2`
-- Allow Remote Requests: ✅ 勾选
-
-**命令行配置**：
-```shell
-/ip dns set servers=192.168.20.2 allow-remote-requests=yes
-```
+RouterOS 自身的 DNS 可保持上游 DNS（如 `223.5.5.5`），无需指向 MSM。
 
 #### 2. 配置 DHCP Server
 
@@ -109,14 +100,12 @@ Netwatch 可以监控 MSM 服务状态，当 MSM 故障时自动切换到备用 
 #### Up 脚本（MSM 恢复时执行）
 
 ```shell
-/ip dns set servers=192.168.20.2
 /ip dhcp-server network set dns-server=192.168.20.2 numbers=0
 ```
 
 #### Down 脚本（MSM 故障时执行）
 
 ```shell
-/ip dns set servers=223.5.5.5
 /ip dhcp-server network set dns-server=223.5.5.5 numbers=0
 ```
 
@@ -150,16 +139,15 @@ Flags: X - disabled, A - active, D - dynamic, C - connect, S - static, r - rip, 
  0 AS   28.0.0.0/8                         192.168.20.2              1
 ```
 
-### 2. 检查 DNS 设置
+### 2. 检查 DHCP DNS 设置
 
 ```shell
-/ip dns print
+/ip dhcp-server network print
 ```
 
-应该显示：
+应包含：
 ```
-              servers: 192.168.20.2
-  allow-remote-requests: yes
+dns-server=192.168.20.2
 ```
 
 ### 3. 测试 DNS 解析
@@ -197,7 +185,7 @@ dig google.com
 **排查步骤**:
 1. 检查 MSM 服务是否运行: `systemctl status msm`
 2. 检查 MosDNS 是否监听 53 端口: `netstat -tlnp | grep 53`
-3. 检查 RouterOS DNS 设置: `/ip dns print`
+3. 检查 DHCP DNS 设置: `/ip dhcp-server network print`
 4. 检查防火墙是否阻止 DNS 请求
 
 ### 问题 2: 无法访问国外网站

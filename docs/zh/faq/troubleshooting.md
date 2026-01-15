@@ -27,6 +27,6 @@ sudo ss -tlnp | grep 7777
 
 ## 5. 代理无流量
 
-- 确认主路由 DNS/DHCP 设置正确
+- 确认主路由 DHCP DNS 设置正确
 - 确认 FakeIP 网段与路由一致
 - 查看 MosDNS 与代理服务日志

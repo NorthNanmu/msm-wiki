@@ -10,7 +10,7 @@
 
 | 配置项 | 值 |
 | --- | --- |
-| DNS 服务器 | `{Debian主机IP}` |
+| DNS 服务器 | 保持上游 DNS（路由器自身） |
 | DHCP DNS | `{Debian主机IP}` |
 
 > 说明：若主路由存在备用 DNS，可在故障切换策略中设置为备用值。
@@ -54,7 +54,7 @@
 ## RouterOS 配置提示（可选）
 
 1. 在 `IP > Routes` 中新增上述路由规则，路由表选择 `main`。
-2. 在 `IP > DNS` 设置路由器 DNS 指向 `{Debian主机IP}`。
+2. 在 `IP > DNS` 保持路由器自身 DNS 为上游值（无需指向 `{Debian主机IP}`）。
 3. 在 `IP > DHCP Server > Networks` 设置 DHCP 下发 DNS 为 `{Debian主机IP}`。
 4. 如需故障切换，可在 `Tools > Netwatch` 监测目标（如 `1.1.1.1`），异常时切换到备用 DNS，恢复后切回主 DNS。
 

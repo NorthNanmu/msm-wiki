@@ -259,7 +259,7 @@ dig google.com
 ### 2. DNS 解析失败
 
 **排查步骤**:
-1. 检查路由器 DNS 设置是否正确
+1. 检查路由器 DHCP DNS 设置是否正确
 2. 检查 MosDNS 服务是否运行
 3. 在 MSM 主机上测试：`nslookup google.com 127.0.0.1`
 4. 查看 MosDNS 日志
