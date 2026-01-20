@@ -1,115 +1,50 @@
-# 基础配置
+# 使用指南总览
 
-本页聚焦主路由与 DNS 分流的基础配置，适用于 RouterOS（ROS）等软路由场景。
+本页基于 MSM 实际界面整理常用功能入口与操作路径，方便你对照页面快速上手。
 
-## 变量约定
+## 访问与登录
 
-- `{Debian主机IP}`：部署 MosDNS / Mihomo / sing-box 的 Debian 主机 IP
+- 访问地址：`http://<MSM-IP>:7777`
+- 示例环境：`http://192.168.20.2/`
+- 首次访问会进入 **初始化向导**（账号、端口、组件与服务选择）
 
-## 主路由 DNS / DHCP DNS 设置
+## 页面导航（与左侧菜单一致）
 
-| 配置项 | 值 |
-| --- | --- |
-| DNS 服务器 | 保持上游 DNS（路由器自身） |
-| DHCP DNS | `{Debian主机IP}` |
+- **仪表盘**：服务状态、资源占用、关键告警与快速入口
+- **MosDNS**：DNS 分流相关功能（概述、规则、客户端、DNS 日志、系统功能、配置管理、实时日志）
+- **代理服务**：当前代理核心的总体状态与开关（Sing-box/Mihomo 二选一）
+- **Mihomo / Sing-box**：代理核心的专属页面（概览、节点、规则、连接、日志、配置）
+- **进程管理**：查看并管理核心服务进程状态
+- **配置管理**：在线编辑配置文件（支持校验与下载）
+- **日志查看**：按服务筛选查看实时日志
+- **用户管理**：账号与权限管理（管理员）
+- **系统诊断**：服务健康状态与诊断建议
+- **系统设置**：端口、时区、下载加速等基础参数
 
-> 说明：若主路由存在备用 DNS，可在故障切换策略中设置为备用值。
+## 推荐使用顺序
 
-## 主路由路由规则（主路由表）
+1. **初始化向导**完成基础参数与服务选择
+2. 进入 **MosDNS > 规则管理** 校验分流规则是否符合你的网络需求
+3. 进入 **MosDNS > 客户端设置** 配置白/黑名单或扫描设备
+4. 进入 **代理服务 / Mihomo / Sing-box** 完成代理配置
+5. 通过 **日志查看** 与 **系统诊断** 排查问题
 
-### MosDNS 和 Mihomo fakeip 路由
+## 常见入口速查
 
-| 目标地址 | 网关 |
-| --- | --- |
-| `28.0.0.0/8` | `{Debian主机IP}` |
-| `8.8.8.8/32` | `{Debian主机IP}` |
-| `1.1.1.1/32` | `{Debian主机IP}` |
+- DNS 分流规则：**MosDNS > 规则管理**
+- 设备名单（白/黑名单）：**MosDNS > 客户端设置**
+- DNS 查询记录：**MosDNS > DNS 日志**
+- 代理节点与规则：**Mihomo > 代理节点 / 规则管理**
+- 连接与流量：**Mihomo > 连接管理**
+- 代理配置文件：**Mihomo/Sing-box > 配置管理**
+- 服务日志：**日志查看**
+- 配置文件管理：**配置管理**
 
-### Telegram 路由
+## 下一步
 
-| 目标地址 | 网关 |
-| --- | --- |
-| `149.154.160.0/22` | `{Debian主机IP}` |
-| `149.154.164.0/22` | `{Debian主机IP}` |
-| `149.154.172.0/22` | `{Debian主机IP}` |
-| `91.108.4.0/22` | `{Debian主机IP}` |
-| `91.108.20.0/22` | `{Debian主机IP}` |
-| `91.108.56.0/22` | `{Debian主机IP}` |
-| `91.108.8.0/22` | `{Debian主机IP}` |
-| `95.161.64.0/22` | `{Debian主机IP}` |
-| `91.108.12.0/22` | `{Debian主机IP}` |
-| `91.108.16.0/22` | `{Debian主机IP}` |
-| `67.198.55.0/24` | `{Debian主机IP}` |
-| `109.239.140.0/24` | `{Debian主机IP}` |
-
-### Netflix 路由
-
-| 目标地址 | 网关 |
-| --- | --- |
-| `207.45.72.0/22` | `{Debian主机IP}` |
-| `208.75.76.0/22` | `{Debian主机IP}` |
-| `210.0.153.0/24` | `{Debian主机IP}` |
-| `185.76.151.0/24` | `{Debian主机IP}` |
-
-## RouterOS 配置提示（可选）
-
-1. 在 `IP > Routes` 中新增上述路由规则，路由表选择 `main`。
-2. 在 `IP > DNS` 保持路由器自身 DNS 为上游值（无需指向 `{Debian主机IP}`）。
-3. 在 `IP > DHCP Server > Networks` 设置 DHCP 下发 DNS 为 `{Debian主机IP}`。
-4. 如需故障切换，可在 `Tools > Netwatch` 监测目标（如 `1.1.1.1`），异常时切换到备用 DNS，恢复后切回主 DNS。
-
-## RouterOS 命令示例（可选）
-
-### 路由规则
-
-```shell
-/ip route
-add comment="mihomo/singbox fakeip" disabled=no distance=1 dst-address=28.0.0.0/8 gateway={Debian主机IP} routing-table=main scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=8.8.8.8/32 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=1.1.1.1/32 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-
-# Telegram
-add disabled=no distance=1 dst-address=149.154.160.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=149.154.164.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=149.154.172.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=91.108.4.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=91.108.20.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=91.108.56.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=91.108.8.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=95.161.64.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=91.108.12.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=91.108.16.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=67.198.55.0/24 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=109.239.140.0/24 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-
-# Netflix
-add disabled=no distance=1 dst-address=207.45.72.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=208.75.76.0/22 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=210.0.153.0/24 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-add disabled=no distance=1 dst-address=185.76.151.0/24 gateway={Debian主机IP} scope=30 suppress-hw-offload=no target-scope=10
-```
-
-### DNS 与 DHCP
-
-```shell
-/ip dns set servers={Debian主机IP}
-/ip dhcp-server network set dns-server={Debian主机IP} numbers=0
-```
-
-### Netwatch 故障切换示例
-
-> 目标 IP 可使用 `1.1.1.1` 等公网 IP，备用 DNS 可替换为实际值。
-
-**up（恢复时）**
-
-```shell
-/ip dns set server={Debian主机IP}
-/ip dhcp-server network set dns-server={Debian主机IP} numbers=0
-```
-
-**down（不可达时）**
-
-```shell
-/ip dns set server=223.5.5.5
-/ip dhcp-server network set dns-server=223.5.5.5 numbers=0
-```
+- [设备管理](/zh/guide/device-management)
+- [MosDNS 管理](/zh/guide/mosdns)
+- [Mihomo 管理](/zh/guide/mihomo)
+- [Sing-box 管理](/zh/guide/singbox)
+- [配置编辑](/zh/guide/config-editor)
+- [日志查看](/zh/guide/logs)

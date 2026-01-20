@@ -155,5 +155,5 @@ MSM 适合以下场景：
 ## 下一步
 
 - [核心功能](/zh/introduction/features) - 了解详细功能
-- [安装部署](/zh/guide/install) - 开始安装 MSM
+- [安装总览](/zh/guide/install) - 开始安装 MSM
 - [路由器集成](/zh/guide/router-integration) - 配置路由器

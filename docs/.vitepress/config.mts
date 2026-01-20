@@ -21,7 +21,7 @@ export default defineConfig({
 
     nav: [
       { text: '首页', link: '/zh/' },
-      { text: '快速开始', link: '/zh/guide/install' },
+      { text: '快速安装', link: '/zh/guide/install' },
       { text: '路由器集成', link: '/zh/guide/router-integration' },
       { text: '使用指南', link: '/zh/guide/basic-config' },
       { text: '版本发布', link: '/zh/guide/releases' },
@@ -38,10 +38,13 @@ export default defineConfig({
           ]
         },
         {
-          text: '快速开始',
+          text: '快速安装',
           items: [
-            { text: '安装部署', link: '/zh/guide/install' },
-            { text: 'Docker 部署', link: '/zh/guide/docker' },
+            { text: '安装总览', link: '/zh/guide/install' },
+            { text: 'Linux 安装', link: '/zh/guide/install-linux' },
+            { text: 'macOS 安装', link: '/zh/guide/install-macos' },
+            { text: 'Alpine 安装', link: '/zh/guide/install-alpine' },
+            { text: 'Docker 安装', link: '/zh/guide/docker' },
             { text: '首次使用', link: '/zh/guide/first-use' },
             { text: '完整使用流程', link: '/zh/guide/complete-workflow' }
           ]
@@ -60,7 +63,7 @@ export default defineConfig({
         {
           text: '使用指南',
           items: [
-            { text: '基础配置', link: '/zh/guide/basic-config' },
+            { text: '使用指南总览', link: '/zh/guide/basic-config' },
             { text: '设备管理', link: '/zh/guide/device-management' },
             { text: 'MosDNS 管理', link: '/zh/guide/mosdns' },
             { text: 'SingBox 管理', link: '/zh/guide/singbox' },

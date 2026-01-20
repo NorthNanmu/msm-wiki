@@ -1,0 +1,31 @@
+# macOS 安装
+
+macOS 支持 **CLI 版** 与 **桌面版**（若发布提供）。
+
+## 方式一：CLI 版（推荐）
+
+```bash
+# 使用 curl
+curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
+```
+
+安装后可使用：
+
+```bash
+msm -d
+```
+
+访问地址：`http://<MSM-IP>:7777`
+
+## 方式二：桌面版（可选）
+
+1. 打开 Releases 页面下载 macOS 安装包（按 Intel / Apple Silicon 选择）
+2. 打开 `.dmg` 并拖拽到 Applications
+3. 若被系统阻止，请在 **系统设置 > 隐私与安全性** 中允许
+
+> 桌面版与 CLI 版功能一致，适合本地管理与快速体验。
+
+## 下一步
+
+- [路由器集成](/zh/guide/router-integration)
+- [首次使用](/zh/guide/first-use)

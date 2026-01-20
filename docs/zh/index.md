@@ -10,7 +10,7 @@ hero:
     alt: MSM Logo
   actions:
     - theme: brand
-      text: 快速开始
+      text: 快速安装
       link: /zh/guide/install
     - theme: alt
       text: 路由器集成
@@ -98,80 +98,22 @@ MSM 支持所有能够配置**静态路由**和**自定义 DNS** 的路由系统
 - ✅ **pfSense** / OPNsense
 - ✅ 其他支持静态路由的路由系统
 
-## 快速开始
+## 快速安装
 
-### 系统要求
-
-- **平台**: Linux (Debian/Ubuntu/CentOS/Alpine) 或 macOS
-- **架构**: x86_64 (amd64) 或 ARM64 (aarch64)
-- **内存**: 最低 512MB，推荐 2GB
-- **权限**: root 或 sudo 权限
-
-### 一键安装
-
-```bash
-# 使用 curl（sudo）
-curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
-# root 用户
-curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | bash
-
-# 或使用 wget（sudo）
-wget -qO- https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | sudo bash
-# root 用户
-wget -qO- https://raw.githubusercontent.com/msm9527/msm-wiki/main/install.sh | bash
-```
-
-::: tip 国内加速（可选）
-如果直连 GitHub 较慢，可使用社区加速镜像：
-
-```bash
-# curl（sudo）
-curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | sudo bash
-# root 用户
-curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | bash
-
-# wget（sudo）
-wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | sudo bash
-# root 用户
-wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install.sh | bash
-
-# 或直接使用国内专用脚本（自动走镜像下载二进制）
-curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
-# root 用户
-curl -fsSL https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | bash
-# wget（sudo）
-wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | sudo bash
-# root 用户
-wget -qO- https://msm.19930520.xyz/https://raw.githubusercontent.com/msm9527/msm-wiki/refs/heads/main/install_cn.sh | bash
-
-# 镜像直链版（等价，用于部分环境更快）
-curl -fsSL https://msm.19930520.xyz/dl/install.sh | sudo bash
-# root 用户
-curl -fsSL https://msm.19930520.xyz/dl/install.sh | bash
-# wget（sudo）
-wget -qO- https://msm.19930520.xyz/dl/install.sh | sudo bash
-# root 用户
-wget -qO- https://msm.19930520.xyz/dl/install.sh | bash
-```
-
-> 系统自带工具小贴士：Debian/Ubuntu/Alpine 最小镜像通常预装 `wget` 而不一定有 `curl`；CentOS/RHEL/Fedora 常见预装 `curl`；macOS 预装 `curl`。缺少对应工具时可先用包管理器安装（如 `apt-get install curl` 或 `yum install wget`）。
-:::
-
-安装完成后访问 `http://your-server-ip:7777`
-
-### 配置路由器
-
-安装完成后，需要在主路由器上配置：
-
-1. **设置 DHCP DNS**: 将主路由的 DHCP 下发 DNS 设置为 MSM 主机 IP
-2. **添加静态路由**: 添加 `28.0.0.0/8` 指向 MSM 主机 IP
-3. **配置设备白名单**: 在 MSM 中配置哪些设备走代理
-
-详细配置请查看 [路由器集成指南](/zh/guide/router-integration)
+1. 选择你的系统与部署方式：
+   - [Linux 安装](/zh/guide/install-linux)
+   - [macOS 安装](/zh/guide/install-macos)
+   - [Alpine 安装](/zh/guide/install-alpine)
+   - [Docker 安装](/zh/guide/docker)
+2. 安装完成后访问管理界面：
+   - 典型访问地址：`http://your-server-ip:7777`
+   - 示例环境：`http://192.168.20.2/`
+3. 按路由器系统完成集成配置：
+   - [路由器集成总览](/zh/guide/router-integration)
 
 ## 下一步
 
-- [安装部署](/zh/guide/install) - 详细安装步骤
-- [路由器集成](/zh/guide/router-integration) - 配置路由器
-- [使用指南](/zh/guide/basic-config) - 基础配置和使用
+- [安装总览](/zh/guide/install) - 安装方式与选择建议
+- [路由器集成](/zh/guide/router-integration) - 不同系统的配置步骤
+- [使用指南总览](/zh/guide/basic-config) - 对照界面功能逐步使用
 - [常见问题](/zh/faq/) - 故障排查
