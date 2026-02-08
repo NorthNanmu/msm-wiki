@@ -409,39 +409,23 @@ jobs:
           ref: ${{ needs.prepare.outputs.branch }}
           token: ${{ secrets.MSM_REPO_TOKEN }}
 
-      - name: 注入 Beta 版本号到源码
+      - name: 注入 Beta 版本号到版本文件
         shell: bash
         run: |
           set -euo pipefail
           BETA_VERSION="${{ needs.prepare.outputs.version }}"
-          ROOT_GO="backend/cmd/msm/commands/root.go"
+          ROOT_VERSION_FILE=".version"
+          INTERNAL_VERSION_FILE="backend/internal/version/.version"
 
-          if [ ! -f "${ROOT_GO}" ]; then
-            echo "error: 未找到 ${ROOT_GO}" >&2
-            exit 1
-          fi
+          printf "%s\n" "${BETA_VERSION}" > "${ROOT_VERSION_FILE}"
+          mkdir -p "$(dirname "${INTERNAL_VERSION_FILE}")"
+          printf "%s\n" "${BETA_VERSION}" > "${INTERNAL_VERSION_FILE}"
 
-          TMP_FILE="$(mktemp)"
-          if ! awk -v ver="${BETA_VERSION}" '
-            BEGIN { done = 0 }
-            {
-              if (!done && $0 ~ /^[[:space:]]*version([[:space:]]+[[:alnum:]_]+)?[[:space:]]*=[[:space:]]*"/) {
-                sub(/"[^"]*"/, "\"" ver "\"")
-                done = 1
-              }
-              print
-            }
-            END { if (!done) exit 2 }
-          ' "${ROOT_GO}" > "${TMP_FILE}"; then
-            rm -f "${TMP_FILE}"
-            echo "error: 在 ${ROOT_GO} 中未找到可替换的 version 声明" >&2
-            exit 1
-          fi
-          mv "${TMP_FILE}" "${ROOT_GO}"
+          ROOT_ACTUAL="$(tr -d '[:space:]' < "${ROOT_VERSION_FILE}")"
+          INTERNAL_ACTUAL="$(tr -d '[:space:]' < "${INTERNAL_VERSION_FILE}")"
 
-          ACTUAL_VERSION="$(sed -nE 's/^[[:space:]]*version([[:space:]]+[[:alnum:]_]+)?[[:space:]]*=[[:space:]]*"([^"]+)".*/\2/p' "${ROOT_GO}" | head -n 1)"
-          if [ "${ACTUAL_VERSION}" != "${BETA_VERSION}" ]; then
-            echo "error: 注入 Beta 版本号失败，期望 ${BETA_VERSION}，实际 ${ACTUAL_VERSION:-<empty>}" >&2
+          if [ "${ROOT_ACTUAL}" != "${BETA_VERSION}" ] || [ "${INTERNAL_ACTUAL}" != "${BETA_VERSION}" ]; then
+            echo "error: 注入 Beta 版本号失败，.version=${ROOT_ACTUAL}, internal=${INTERNAL_ACTUAL}, 期望=${BETA_VERSION}" >&2
             exit 1
           fi
 
