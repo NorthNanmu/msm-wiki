@@ -27,3 +27,4 @@ Beta 发布信息将由 CI 自动写入本页面。
 2. Docker 标签格式：`msmbox/msm:beta-x.x.x` 与 `msmbox/msm:beta-latest`
 3. 若需稳定环境，请使用[稳定版发布](/zh/guide/releases)
 4. Beta 一键安装：`curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install_beta.sh | sudo bash`
+5. Beta 国内镜像安装：`curl -fsSL https://raw.githubusercontent.com/msm9527/msm-wiki/main/install_beta_cn.sh | sudo bash`
