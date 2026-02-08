@@ -421,10 +421,27 @@ jobs:
             exit 1
           fi
 
-          perl -i -pe 's/^(\s*version\s*=\s*")[^"]+(".*)$/$1'"${BETA_VERSION}"'$2/ if !$done++ && /^\s*version\s*=\s*"/' "${ROOT_GO}"
+          TMP_FILE="$(mktemp)"
+          if ! awk -v ver="${BETA_VERSION}" '
+            BEGIN { done = 0 }
+            {
+              if (!done && $0 ~ /^[[:space:]]*version([[:space:]]+[[:alnum:]_]+)?[[:space:]]*=[[:space:]]*"/) {
+                sub(/"[^"]*"/, "\"" ver "\"")
+                done = 1
+              }
+              print
+            }
+            END { if (!done) exit 2 }
+          ' "${ROOT_GO}" > "${TMP_FILE}"; then
+            rm -f "${TMP_FILE}"
+            echo "error: 在 ${ROOT_GO} 中未找到可替换的 version 声明" >&2
+            exit 1
+          fi
+          mv "${TMP_FILE}" "${ROOT_GO}"
 
-          if ! grep -Eq "^[[:space:]]*version[[:space:]]*=[[:space:]]*\"${BETA_VERSION//./\\.}\"" "${ROOT_GO}"; then
-            echo "error: 注入 Beta 版本号失败: ${BETA_VERSION}" >&2
+          ACTUAL_VERSION="$(sed -nE 's/^[[:space:]]*version([[:space:]]+[[:alnum:]_]+)?[[:space:]]*=[[:space:]]*"([^"]+)".*/\2/p' "${ROOT_GO}" | head -n 1)"
+          if [ "${ACTUAL_VERSION}" != "${BETA_VERSION}" ]; then
+            echo "error: 注入 Beta 版本号失败，期望 ${BETA_VERSION}，实际 ${ACTUAL_VERSION:-<empty>}" >&2
             exit 1
           fi
 
