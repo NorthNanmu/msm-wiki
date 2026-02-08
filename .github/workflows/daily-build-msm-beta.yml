@@ -46,6 +46,9 @@ jobs:
       commit_message: ${{ steps.meta.outputs.commit_message }}
       commit_author: ${{ steps.meta.outputs.commit_author }}
       commit_date: ${{ steps.meta.outputs.commit_date }}
+      previous_release_published_at: ${{ steps.meta.outputs.previous_release_published_at }}
+      log_since_epoch: ${{ steps.meta.outputs.log_since_epoch }}
+      log_until_epoch: ${{ steps.meta.outputs.log_until_epoch }}
       previous_version: ${{ steps.meta.outputs.previous_version }}
       previous_version_commit: ${{ steps.meta.outputs.previous_version_commit }}
       commit_count: ${{ steps.meta.outputs.commit_count }}
@@ -109,34 +112,44 @@ jobs:
           COMMIT_AUTHOR="$(git log -1 --pretty=format:'%an')"
           COMMIT_DATE="$(git log -1 --pretty=format:'%ci')"
 
-          # 通过 .version 历史获取上一个版本及其提交（用于确定提交范围）
+          # 按“上一版发布时间 -> 当前发布时间”统计提交范围
           PREVIOUS_VERSION=""
           PREVIOUS_VERSION_COMMIT=""
-          if [ -f ".version" ]; then
-            while read -r VERSION_COMMIT; do
-              VERSION_AT_COMMIT="$(git show "${VERSION_COMMIT}:.version" 2>/dev/null | tr -d '[:space:]' || true)"
-              if [ -z "${VERSION_AT_COMMIT}" ]; then
-                continue
-              fi
-              if [ "${VERSION_AT_COMMIT}" != "${VERSION}" ]; then
-                PREVIOUS_VERSION="${VERSION_AT_COMMIT}"
-                PREVIOUS_VERSION_COMMIT="${VERSION_COMMIT}"
-                break
-              fi
-            done < <(git log --follow --format=%H -- .version)
+          PREVIOUS_RELEASE_PUBLISHED_AT=""
+          LOG_SINCE_EPOCH=""
+          LOG_UNTIL_EPOCH="$(git log -1 --format=%ct HEAD)"
+          CURRENT_RELEASE_TIME="$(date -u -d "@${LOG_UNTIL_EPOCH}" +'%Y-%m-%dT%H:%M:%SZ')"
+
+          RELEASES_API="https://api.github.com/repos/msm9527/msm-wiki/releases?per_page=100"
+          RELEASES_JSON="$(curl -fsSL "${RELEASES_API}" 2>/dev/null || echo '[]')"
+
+          if command -v jq >/dev/null 2>&1; then
+            if [ "${CHANNEL}" = "beta" ]; then
+              PREVIOUS_RELEASE_PUBLISHED_AT="$(echo "${RELEASES_JSON}" | jq -r '[.[] | select(.draft == false and .prerelease == true and (.tag_name | startswith("beta-")) and .published_at != null)] | sort_by(.published_at) | last | .published_at // empty' || true)"
+            else
+              PREVIOUS_RELEASE_PUBLISHED_AT="$(echo "${RELEASES_JSON}" | jq -r '[.[] | select(.draft == false and .prerelease == false and ((.tag_name | startswith("beta-")) | not) and .published_at != null)] | sort_by(.published_at) | last | .published_at // empty' || true)"
+            fi
+          else
+            echo "warning: jq 不可用，无法按发布时间窗口筛选发布记录" >&2
           fi
 
-          # 如果找到上一个版本提交，获取从该提交到当前的所有提交
-          # 否则获取最近 20 条提交
-          if [ -n "${PREVIOUS_VERSION_COMMIT}" ]; then
-            echo "找到上一个版本: ${PREVIOUS_VERSION} (${PREVIOUS_VERSION_COMMIT})"
-            CHANGELOG="$(git log ${PREVIOUS_VERSION_COMMIT}..HEAD --pretty=format:'- [%h](https://github.com/msm9527/msm/commit/%H) %s _%an, %ar_' | sed 's/$/\\n/' | tr -d '\n')"
-            COMMIT_COUNT="$(git rev-list --count ${PREVIOUS_VERSION_COMMIT}..HEAD)"
-          else
-            echo "未找到上一个版本提交，使用最近 20 条提交"
-            CHANGELOG="$(git log -20 --pretty=format:'- [%h](https://github.com/msm9527/msm/commit/%H) %s _%an, %ar_' | sed 's/$/\\n/' | tr -d '\n')"
-            COMMIT_COUNT="20"
+          if [ -n "${PREVIOUS_RELEASE_PUBLISHED_AT}" ]; then
+            LOG_SINCE_EPOCH="$(date -d "${PREVIOUS_RELEASE_PUBLISHED_AT}" +%s 2>/dev/null || true)"
           fi
+
+          LOG_ARGS=( "--until=@${LOG_UNTIL_EPOCH}" )
+          if [ -n "${LOG_SINCE_EPOCH}" ]; then
+            PREVIOUS_VERSION="${PREVIOUS_RELEASE_PUBLISHED_AT}"
+            LOG_ARGS+=( "--since=@${LOG_SINCE_EPOCH}" )
+            echo "按发布时间窗口统计提交: ${PREVIOUS_RELEASE_PUBLISHED_AT} -> ${CURRENT_RELEASE_TIME}"
+          else
+            # 首次发布或未获取到上一版发布时间时，回退到最近 50 条提交
+            LOG_ARGS=( "-50" "--until=@${LOG_UNTIL_EPOCH}" )
+            echo "未找到上一版发布时间，回退为最近 50 条提交"
+          fi
+
+          CHANGELOG="$(git log "${LOG_ARGS[@]}" --pretty=format:'- [%h](https://github.com/msm9527/msm/commit/%H) %s _%an, %ar_' | sed 's/$/\\n/' | tr -d '\n')"
+          COMMIT_COUNT="$(git log "${LOG_ARGS[@]}" --pretty=format:'%H' | sed '/^$/d' | wc -l | tr -d ' ')"
 
           echo "version=${RELEASE_VERSION}" >> "$GITHUB_OUTPUT"
           echo "base_version=${BASE_VERSION}" >> "$GITHUB_OUTPUT"
@@ -157,6 +170,9 @@ jobs:
           echo "commit_message=${COMMIT_MESSAGE}" >> "$GITHUB_OUTPUT"
           echo "commit_author=${COMMIT_AUTHOR}" >> "$GITHUB_OUTPUT"
           echo "commit_date=${COMMIT_DATE}" >> "$GITHUB_OUTPUT"
+          echo "previous_release_published_at=${PREVIOUS_RELEASE_PUBLISHED_AT}" >> "$GITHUB_OUTPUT"
+          echo "log_since_epoch=${LOG_SINCE_EPOCH}" >> "$GITHUB_OUTPUT"
+          echo "log_until_epoch=${LOG_UNTIL_EPOCH}" >> "$GITHUB_OUTPUT"
           echo "previous_version=${PREVIOUS_VERSION}" >> "$GITHUB_OUTPUT"
           echo "previous_version_commit=${PREVIOUS_VERSION_COMMIT}" >> "$GITHUB_OUTPUT"
           echo "commit_count=${COMMIT_COUNT}" >> "$GITHUB_OUTPUT"
@@ -197,20 +213,26 @@ jobs:
           script: |
             const { execSync } = require('child_process');
 
-            // 获取上一个版本 tag
-            const previousVersion = '${{ steps.meta.outputs.previous_version }}';
-            const previousVersionCommit = '${{ steps.meta.outputs.previous_version_commit }}';
-            const commitCount = parseInt('${{ steps.meta.outputs.commit_count }}');
+            const previousReleasePublishedAt = '${{ steps.meta.outputs.previous_release_published_at }}';
+            const logSinceEpoch = '${{ steps.meta.outputs.log_since_epoch }}';
+            const logUntilEpoch = '${{ steps.meta.outputs.log_until_epoch }}';
 
-            // 根据是否有上一个版本提交，获取相应范围的提交记录
-            let gitLogCmd;
-            if (previousVersionCommit) {
-              console.log(`获取从 ${previousVersionCommit} 到 HEAD 的所有提交（共 ${commitCount} 个）`);
-              gitLogCmd = `git log ${previousVersionCommit}..HEAD --pretty=format:"%h|%s|%an|%ar"`;
+            // 与 prepare 阶段保持一致：按发布时间窗口获取提交
+            const logArgs = ['--pretty=format:"%h|%s|%an|%ar"'];
+            if (logSinceEpoch) {
+              logArgs.push(`--since=@${logSinceEpoch}`);
             } else {
-              console.log('未找到上一个版本提交，获取最近 20 条提交');
-              gitLogCmd = 'git log -20 --pretty=format:"%h|%s|%an|%ar"';
+              // 首次发布或未获取到上一版发布时间时，回退最近 50 条
+              logArgs.push('-50');
             }
+            if (logUntilEpoch) {
+              logArgs.push(`--until=@${logUntilEpoch}`);
+            }
+
+            const gitLogCmd = `git log ${logArgs.join(' ')}`;
+            console.log(logSinceEpoch
+              ? `按发布时间窗口获取提交: since=${logSinceEpoch}, until=${logUntilEpoch}`
+              : '未找到上一版发布时间，回退获取最近 50 条提交');
 
             const commits = execSync(gitLogCmd, { encoding: 'utf-8' })
               .split('\n')
@@ -222,11 +244,16 @@ jobs:
 
             console.log(`实际获取到 ${commits.length} 个提交记录`);
 
+            if (commits.length === 0) {
+              core.setOutput('summary', '本次发布窗口内无新增提交');
+              return;
+            }
+
             // 如果没有 API Key，使用默认总结
             if (!process.env.MODELSCOPE_API_KEY) {
               console.log('未配置 MODELSCOPE_API_KEY，使用默认总结');
-              const summary = previousVersion
-                ? `本次版本从 ${previousVersion} 更新，包含 ${commits.length} 个提交，主要更新：${commits[0].subject}`
+              const summary = previousReleasePublishedAt
+                ? `本次版本从 ${previousReleasePublishedAt} 之后更新，包含 ${commits.length} 个提交，主要更新：${commits[0].subject}`
                 : `本次构建包含 ${commits.length} 个提交，主要更新：${commits[0].subject}`;
               core.setOutput('summary', summary);
               return;
@@ -311,8 +338,8 @@ jobs:
             } catch (error) {
               console.error('AI 总结失败:', error.message);
               // 失败时使用默认总结
-              const summary = previousVersion
-                ? `本次版本从 ${previousVersion} 更新，包含 ${commits.length} 个提交，主要更新：${commits[0].subject}`
+              const summary = previousReleasePublishedAt
+                ? `本次版本从 ${previousReleasePublishedAt} 之后更新，包含 ${commits.length} 个提交，主要更新：${commits[0].subject}`
                 : `本次构建包含 ${commits.length} 个提交，主要更新：${commits[0].subject}`;
               core.setOutput('summary', summary);
             }
