@@ -143,9 +143,9 @@ jobs:
             LOG_ARGS+=( "--since=@${LOG_SINCE_EPOCH}" )
             echo "按发布时间窗口统计提交: ${PREVIOUS_RELEASE_PUBLISHED_AT} -> ${CURRENT_RELEASE_TIME}"
           else
-            # 首次发布或未获取到上一版发布时间时，回退到最近 50 条提交
-            LOG_ARGS=( "-50" "--until=@${LOG_UNTIL_EPOCH}" )
-            echo "未找到上一版发布时间，回退为最近 50 条提交"
+            # 首次发布或未获取到上一版发布时间时，回退到最近 100 条提交
+            LOG_ARGS=( "-100" "--until=@${LOG_UNTIL_EPOCH}" )
+            echo "未找到上一版发布时间，回退为最近 100 条提交"
           fi
 
           CHANGELOG="$(git log "${LOG_ARGS[@]}" --pretty=format:'- [%h](https://github.com/msm9527/msm/commit/%H) %s _%an, %ar_' | sed 's/$/\\n/' | tr -d '\n')"
@@ -225,8 +225,8 @@ jobs:
             if (logSinceEpoch && logSinceEpoch.trim()) {
               logArgs.push(`--since=@${logSinceEpoch}`);
             } else {
-              // 首次发布或未获取到上一版发布时间时，回退最近 50 条
-              logArgs.push('-50');
+              // 首次发布或未获取到上一版发布时间时，回退最近 100 条
+              logArgs.push('-100');
             }
             if (logUntilEpoch && logUntilEpoch.trim()) {
               logArgs.push(`--until=@${logUntilEpoch}`);
@@ -235,7 +235,7 @@ jobs:
             const gitLogCmd = `git log ${logArgs.join(' ')}`;
             console.log(logSinceEpoch && logSinceEpoch.trim()
               ? `按发布时间窗口获取提交: since=${logSinceEpoch}, until=${logUntilEpoch}`
-              : '未找到上一版发布时间，回退获取最近 50 条提交');
+              : '未找到上一版发布时间，回退获取最近 100 条提交');
 
             const commits = execSync(gitLogCmd, { encoding: 'utf-8' })
               .split('\n')
