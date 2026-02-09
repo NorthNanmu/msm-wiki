@@ -218,19 +218,22 @@ jobs:
             const logUntilEpoch = '${{ steps.meta.outputs.log_until_epoch }}';
 
             // 与 prepare 阶段保持一致：按发布时间窗口获取提交
-            const logArgs = ['--pretty=format:"%h|%s|%an|%ar"'];
-            if (logSinceEpoch) {
+            // 使用 %x1F 作为分隔符避免提交信息中的特殊字符干扰
+            const logArgs = ['--pretty=format:%h%x1F%s%x1F%an%x1F%ar'];
+
+            // 检查是否有有效的时间戳（非空字符串）
+            if (logSinceEpoch && logSinceEpoch.trim()) {
               logArgs.push(`--since=@${logSinceEpoch}`);
             } else {
               // 首次发布或未获取到上一版发布时间时，回退最近 50 条
               logArgs.push('-50');
             }
-            if (logUntilEpoch) {
+            if (logUntilEpoch && logUntilEpoch.trim()) {
               logArgs.push(`--until=@${logUntilEpoch}`);
             }
 
             const gitLogCmd = `git log ${logArgs.join(' ')}`;
-            console.log(logSinceEpoch
+            console.log(logSinceEpoch && logSinceEpoch.trim()
               ? `按发布时间窗口获取提交: since=${logSinceEpoch}, until=${logUntilEpoch}`
               : '未找到上一版发布时间，回退获取最近 50 条提交');
 
@@ -238,9 +241,19 @@ jobs:
               .split('\n')
               .filter(line => line.trim())
               .map(line => {
-                const [hash, subject, author, date] = line.split('|');
-                return { hash, subject, author, date };
-              });
+                // 使用 %x1F (Unit Separator) 分隔，避免提交信息中的特殊字符干扰
+                const parts = line.split('\x1F');
+                if (parts.length >= 4) {
+                  return {
+                    hash: parts[0],
+                    subject: parts[1],
+                    author: parts[2],
+                    date: parts[3]
+                  };
+                }
+                return null;
+              })
+              .filter(commit => commit !== null);
 
             console.log(`实际获取到 ${commits.length} 个提交记录`);
 
