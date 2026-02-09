@@ -7,19 +7,23 @@
 ## 🧪 最新 Beta 版本
 
 
-> 当前 Beta 版本：`beta-0.9.7`  
-> 发布时间：2026-02-09 00:53  
-> - 发布页：<https://github.com/msm9527/msm-wiki/releases/tag/beta-0.9.7>  
+> 当前 Beta 版本：`beta-0.9.8`  
+> 发布时间：2026-02-09 09:36  
+> - 发布页：<https://github.com/msm9527/msm-wiki/releases/tag/beta-0.9.8>  
 > - 下载方式：同一发布页内提供各平台二进制与安装包
 
-本次发布窗口内无新增提交
+### 🔧 变更（Changed）
+- 修正 machine_code 为 32 位并兼容旧 UUID 自动纠正
+
+### 🐛 修复（Fixed）
+- 更新代码以同步版本到 0.9.8
 
 ::: details 📋 构建信息
 - **发布通道**: beta（Beta 版）
-- **源提交**: [`b930003`](https://github.com/msm9527/msm/commit/b930003ee1655b0d534cb8550a09f650c4382253)
-- **提交信息**: 统一machine_code为UUID格式并兼容旧缓存
-- **提交作者**: msm
-- **提交时间**: 2026-02-09 00:53:31 +0800
+- **源提交**: [`7acf646`](https://github.com/msm9527/msm/commit/7acf646670952391b3072f6143f8828166f1b381)
+- **提交信息**: chore: sync version to 0.9.8
+- **提交作者**: github-actions[bot]
+- **提交时间**: 2026-02-09 01:36:57 +0000
 :::
 
 ---
