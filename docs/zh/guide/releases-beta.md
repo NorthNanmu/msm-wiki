@@ -7,23 +7,26 @@
 ## 🧪 最新 Beta 版本
 
 
-> 当前 Beta 版本：`beta-0.9.9`  
-> 发布时间：2026-02-10 20:58  
-> - 发布页：<https://github.com/msm9527/msm-wiki/releases/tag/beta-0.9.9>  
+> 当前 Beta 版本：`beta-0.9.10`  
+> 发布时间：2026-02-10 21:04  
+> - 发布页：<https://github.com/msm9527/msm-wiki/releases/tag/beta-0.9.10>  
 > - 下载方式：同一发布页内提供各平台二进制与安装包
 
-### 🐛 修复（Fixed）
-- 修复 MSM 更新版本判断错误
+根据提供的 Git 提交记录，以下是结构化的版本发布文档：
 
 ### 🔧 变更（Changed）
-- 同步版本到 0.9.9
+- 版本号同步到 0.9.10
+- 更新代码
+
+### 📝 备注（Notes）
+- 合并了开发分支的最新更改
 
 ::: details 📋 构建信息
 - **发布通道**: beta（Beta 版）
-- **源提交**: [`791a782`](https://github.com/msm9527/msm/commit/791a782d19db2f1a65cb0ac7e53610fe005ec693)
-- **提交信息**: chore: sync version to 0.9.9
+- **源提交**: [`c765bb8`](https://github.com/msm9527/msm/commit/c765bb8e6a9a4bb64e9ad732ca39404a549e5e4a)
+- **提交信息**: chore: sync version to 0.9.10
 - **提交作者**: github-actions[bot]
-- **提交时间**: 2026-02-10 12:58:44 +0000
+- **提交时间**: 2026-02-10 13:04:48 +0000
 :::
 
 ---
