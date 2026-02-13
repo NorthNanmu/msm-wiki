@@ -13,6 +13,7 @@
 - **掩码或前缀长度**：`255.0.0.0` 或 `/8`
 - **下一跳 IP**：`192.168.1.2`
 - **距离**：保持默认即可
+<img width="2553" height="1280" alt="image" src="https://github.com/user-attachments/assets/5057cdcf-acf5-46a4-a190-c8622a69971c" />
 
 ## 步骤二：配置 DHCP DNS
 
@@ -20,6 +21,7 @@
 
 - **DNS 服务器**：`192.168.1.2`
 - **备用 DNS**：可选填写运营商 DNS
+<img width="1863" height="1266" alt="image" src="https://github.com/user-attachments/assets/68fb5a28-8059-47d0-86f5-71c0df55e20b" />
 
 ## 验证
 
