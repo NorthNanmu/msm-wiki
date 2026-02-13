@@ -7,8 +7,7 @@
 
 ## 步骤一：下载并修改静态路由规则
 
-<a href="/zh/guide/static_route.csv" download>点击下载 static_route.csv</a>
-
+- <a href="/zh/guide/static_route.csv" download>点击下载 static_route.csv</a>
 - 用WPS打开下载的static_route.csv文件
 - 查找替换，搜索**10.0.0.2**并替换为自己msm的ipv4地址
 - 查找替换，搜索**fe80::be24:11ff:feec:684d**并替换为自己msm的ipv6地址
