@@ -5,7 +5,7 @@
 - 爱快网关：`192.168.1.1`
 - MSM 主机：`192.168.1.2`
 
-## 步骤一：[下载并修改静态路由规则](/zh/guide/static_route.csv)
+## 步骤一：<a :href="$withBase('/zh/guide/static_route.csv')" download>下载并修改静态路由规则</a>
 
 - 用WPS打开下载的static_route.csv文件
 - 查找替换，搜索**10.0.0.2**并替换为自己msm的ipv4地址
