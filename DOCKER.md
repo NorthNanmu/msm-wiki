@@ -192,7 +192,7 @@ docker-compose up -d
 1.为容器添加veth接口，为其分配一个内网专用 IP
 ```bash
 /interface veth
-add address=192.168.88.2/24,fd88::2/64 dhcp=no gateway=192.168.88.2 gateway6=fd88::1 name=veth-msm
+add address=192.168.88.2/24,fd88::2/64 dhcp=no gateway=192.168.88.1 gateway6=fd88::1 name=veth-msm
 ```
 
 2.将veth 添加到网桥
