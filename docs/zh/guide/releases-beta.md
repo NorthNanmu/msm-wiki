@@ -12,7 +12,7 @@
 > - 发布页：<https://github.com/msm9527/msm-wiki/releases/tag/beta-0.9.11>  
 > - 下载方式：同一发布页内提供各平台二进制与安装包
 
-本次发布窗口内无新增提交
+本次版本从 2026-02-11T21:03:00Z 之后更新，包含 3 个提交，主要更新：chore: sync version to 0.9.11
 
 ::: details 📋 构建信息
 - **发布通道**: beta（Beta 版）
