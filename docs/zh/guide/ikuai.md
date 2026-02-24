@@ -10,8 +10,8 @@
 - [下载爱快 3.X 规则](https://raw.githubusercontent.com/msm9527/msm-wiki/main/docs/zh/guide/ikuai_static_route_3.x.csv)
 - [下载爱快 4.X (Beta版) 规则](https://raw.githubusercontent.com/msm9527/msm-wiki/main/docs/zh/guide/ikuai_static_route_4.x_beta.csv)
 - 使用Excel、WPS亦或是Visual Studio打开对应爱快版本的static_route.csv文件
-- 查找替换，搜索并替换**`10.0.0.2`**为**`192.168.1.2`** （填写实际的MSM IPv4地址）
-- 查找替换，搜索并替换**`fe80::be24:11ff:feec:684d`**为**`fe80::a1b2:c3d4:e5f6:g7h8`** （填写实际的MSM IPv6地址）
+- 查找替换，搜索并替换 **`10.0.0.2`** 为 **`192.168.1.2`** （填写实际的MSM IPv4地址）
+- 查找替换，搜索并替换 **`fe80::be24:11ff:feec:684d`** 为 **`fe80::a1b2:c3d4:e5f6:g7h8`** （填写实际的MSM IPv6地址）
 - 保存并关闭文件
 
 ## 步骤二：导入静态路由（FakeIP）
